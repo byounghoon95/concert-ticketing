@@ -41,10 +41,10 @@ public class Queue extends BaseEntity {
     private LocalDateTime expiredAt;
 
     @Transient
-    private int position;
+    private Long position;
 
     @Builder
-    public Queue(Long id, UUID token, Member member, QueueStatus status, LocalDateTime expiredAt, int position) {
+    public Queue(Long id, UUID token, Member member, QueueStatus status, LocalDateTime expiredAt, Long position) {
         this.id = id;
         this.token = token;
         this.status = status;
@@ -59,5 +59,9 @@ public class Queue extends BaseEntity {
 
     public void updateExpiredAt(LocalDateTime expiredAt) {
         this.expiredAt = expiredAt;
+    }
+
+    public void updatePosition(Long position) {
+        this.position = position;
     }
 }
