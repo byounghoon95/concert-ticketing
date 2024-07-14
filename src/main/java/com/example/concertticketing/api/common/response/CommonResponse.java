@@ -1,4 +1,4 @@
-package com.example.concertticketing.domain.common.response;
+package com.example.concertticketing.api.common.response;
 
 import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;

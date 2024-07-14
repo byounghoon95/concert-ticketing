@@ -1,4 +1,4 @@
-package com.example.concertticketing.domain.common.response;
+package com.example.concertticketing.api.common.response;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;

@@ -1,6 +1,6 @@
 package com.example.concertticketing.domain.exception;
 
-import com.example.concertticketing.domain.common.response.CommonResponse;
+import com.example.concertticketing.api.common.response.CommonResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
