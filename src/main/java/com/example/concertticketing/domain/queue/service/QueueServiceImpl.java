@@ -54,8 +54,8 @@ public class QueueServiceImpl implements QueueService {
      * */
     @Transactional
     @Override
-    public void updateActiveTokenToExpired(LocalDateTime time, QueueStatus prev, QueueStatus change) {
-        queueRepository.updateActiveTokenToExpired(time, prev, change);
+    public void updateActiveTokenToExpired(LocalDateTime time) {
+        queueRepository.updateActiveTokenToExpired(time);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class QueueServiceImpl implements QueueService {
      * */
     @Transactional
     @Override
-    public void updateWaitTokenToActive(LocalDateTime now, QueueStatus prev, QueueStatus change) {
+    public void updateWaitTokenToActive(LocalDateTime now) {
         int available = 10;
         int count = queueRepository.countActiveMember(QueueStatus.ACTIVE);
 
@@ -84,9 +84,9 @@ public class QueueServiceImpl implements QueueService {
             return;
         }
 
-        queueRepository.findWaitMemberList(prev, PageRequest.of(0, available - count)).stream()
+        queueRepository.findWaitMemberList(QueueStatus.WAIT, PageRequest.of(0, available - count)).stream()
                 .forEach(queue -> {
-                    queue.updateStatus(change);
+                    queue.updateStatus(QueueStatus.ACTIVE);
                     queue.updateExpiredAt(LocalDateTime.now().plusSeconds(10));
                 });
     }

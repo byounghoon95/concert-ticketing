@@ -25,31 +25,31 @@ public class QueueRepositoryImpl implements QueueRepository {
 
     @Override
     public Optional<Queue> findValidTokenByMemberId(Long memberId, QueueStatus status) {
-        return queueJpaRepository.findValidTokenByMemberId(memberId, status);
+        return queueJpaRepository.findByMemberIdAndStatusNot(memberId, status);
     }
 
     @Override
-    public void updateActiveTokenToExpired(LocalDateTime time, QueueStatus prev, QueueStatus change) {
-        queueJpaRepository.updateActiveTokenToExpired(time,prev,change);
+    public void updateActiveTokenToExpired(LocalDateTime time) {
+        queueJpaRepository.updateActiveTokenToExpired(time);
     }
 
     @Override
     public List<Queue> findFirstWaitMember(QueueStatus status, Pageable pageable) {
-        return queueJpaRepository.findFirstWaitMember(status, pageable);
+        return queueJpaRepository.findByStatus(status, pageable);
     }
 
     @Override
     public int countActiveMember(QueueStatus status) {
-        return queueJpaRepository.countActiveMember(status);
+        return queueJpaRepository.countByStatus(status);
     }
 
     @Override
     public List<Queue> findWaitMemberList(QueueStatus prev, PageRequest pageable) {
-        return queueJpaRepository.findWaitMemberList(prev, pageable);
+        return queueJpaRepository.findByStatus(prev, pageable);
     }
 
     @Override
     public Optional<Queue> findActiveTokenByMemberId(Long memberId, QueueStatus status) {
-        return queueJpaRepository.findActiveTokenByMemberId(memberId, status);
+        return queueJpaRepository.findByMemberIdAndStatus(memberId, status);
     }
 }

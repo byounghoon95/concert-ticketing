@@ -20,7 +20,7 @@ public class ExpireScheduler {
      * */
     @Scheduled(fixedDelay = 10000)
     public void processExpiredQueues() {
-        queueService.updateActiveTokenToExpired(LocalDateTime.now(), QueueStatus.ACTIVE, QueueStatus.EXPIRED);
+        queueService.updateActiveTokenToExpired(LocalDateTime.now());
     }
 
     /**
@@ -28,6 +28,6 @@ public class ExpireScheduler {
      * */
     @Scheduled(fixedDelay = 10000)
     public void processActiveToken() {
-        queueService.updateWaitTokenToActive(LocalDateTime.now(), QueueStatus.WAIT, QueueStatus.ACTIVE);
+        queueService.updateWaitTokenToActive(LocalDateTime.now());
     }
 }
