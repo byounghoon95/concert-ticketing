@@ -1,7 +1,7 @@
 package com.example.concertticketing.domain.concert.model;
 
-import com.example.concertreservation.domain.common.entity.BaseEntity;
-import com.example.concertreservation.domain.member.model.Member;
+import com.example.concertticketing.domain.common.entity.BaseEntity;
+import com.example.concertticketing.domain.member.model.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
