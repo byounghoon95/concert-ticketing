@@ -8,6 +8,5 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ConcertDetailJpaRepository extends JpaRepository<ConcertDetail,Long> {
-    @Query("SELECT c FROM ConcertDetail c WHERE c.concert.id = :concertId")
     List<ConcertDetail> findByConcertId(@Param("concertId") Long concertId);
 }
