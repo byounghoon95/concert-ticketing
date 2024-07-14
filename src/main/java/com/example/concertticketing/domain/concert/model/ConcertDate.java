@@ -1,9 +1,9 @@
 package com.example.concertticketing.domain.concert.model;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 public record ConcertDate(
-        Long concertDetailId,
-        LocalDateTime dates
+        Long concertId,
+        List<ConcertDateDetails> concertDates
 ) {
 }

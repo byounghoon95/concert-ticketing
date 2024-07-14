@@ -37,34 +37,20 @@ public class Seat extends BaseEntity {
     @Column(name = "PRICE")
     private Long price;
 
-    // 5분간 임시 지정을 위함
-    @Column(name = "EXPIRED_AT")
-    private LocalDateTime expiredAt;
-
-    @Enumerated(EnumType.STRING) // DB 저장 시 문자열로 저장
-    @Column(name = "STATUS")
-    private SeatStatus status; // AVAILABLE, TEMPORARY, RESERVED
+    @Column(name = "RESERVED_AT")
+    private LocalDateTime reservedAt;
 
     @Builder
-    public Seat(Long id, Member member, ConcertDetail concert, int seatNo, Long price, LocalDateTime expiredAt, SeatStatus status) {
+    public Seat(Long id, Member member, ConcertDetail concert, int seatNo, Long price, LocalDateTime reservedAt) {
         this.id = id;
         this.member = member;
         this.concert = concert;
         this.seatNo = seatNo;
         this.price = price;
-        this.expiredAt = expiredAt;
-        this.status = status;
+        this.reservedAt = reservedAt;
     }
 
-    public boolean isAvailable() {
-        if (this.status == SeatStatus.AVAILABLE) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public void updateStatus(SeatStatus status) {
-        this.status = status;
+    public void updateReservedAt(LocalDateTime reservedAt) {
+        this.reservedAt = reservedAt;
     }
 }
