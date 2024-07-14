@@ -1,7 +1,9 @@
 package com.example.concertticketing;
 
+import com.example.concertticketing.api.concert.ConcertController;
 import com.example.concertticketing.api.member.MemberController;
 import com.example.concertticketing.api.queue.QueueController;
+import com.example.concertticketing.domain.concert.service.ConcertServiceImpl;
 import com.example.concertticketing.domain.member.service.MemberServiceImpl;
 import com.example.concertticketing.domain.queue.service.QueueServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(controllers = {
         MemberController.class,
         QueueController.class,
+        ConcertController.class,
 })
 public abstract class CommonControllerTest {
     @Autowired
@@ -26,5 +29,8 @@ public abstract class CommonControllerTest {
 
     @MockBean
     protected QueueServiceImpl queueService;
+
+    @MockBean
+    protected ConcertServiceImpl concertService;
 
 }
