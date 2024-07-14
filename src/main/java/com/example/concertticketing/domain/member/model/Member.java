@@ -27,7 +27,8 @@ public class Member extends BaseEntity {
     private Long balance;
 
     @Builder
-    public Member(String memberLoginId, Long balance) {
+    public Member(Long id, String memberLoginId, Long balance) {
+        this.id = id;
         this.memberLoginId = memberLoginId;
         this.balance = balance;
     }
