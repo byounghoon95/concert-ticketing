@@ -1,6 +1,5 @@
-package com.example.concertticketing.domain.config;
+package com.example.concertticketing.api.interceptor;
 
-import com.example.concertticketing.domain.common.interceptor.TokenVerificationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
