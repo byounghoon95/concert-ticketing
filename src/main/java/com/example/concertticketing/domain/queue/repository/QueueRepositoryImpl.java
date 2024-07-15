@@ -52,4 +52,14 @@ public class QueueRepositoryImpl implements QueueRepository {
     public Optional<Queue> findActiveTokenByMemberId(Long memberId, QueueStatus status) {
         return queueJpaRepository.findByMemberIdAndStatus(memberId, status);
     }
+
+    @Override
+    public void deleteAllInBatch() {
+        queueJpaRepository.deleteAllInBatch();
+    }
+
+    @Override
+    public Optional<Queue> findById(Long id) {
+        return queueJpaRepository.findById(id);
+    }
 }

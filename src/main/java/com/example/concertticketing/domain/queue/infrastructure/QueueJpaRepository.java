@@ -11,9 +11,8 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-public interface QueueJpaRepository extends JpaRepository<Queue, UUID> {
+public interface QueueJpaRepository extends JpaRepository<Queue, Long> {
     Optional<Queue> findByMemberIdAndStatusNot(@Param("memberId") Long memberId, @Param("status") QueueStatus status);
 
     @Modifying

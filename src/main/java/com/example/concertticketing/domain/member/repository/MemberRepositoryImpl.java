@@ -23,4 +23,13 @@ public class MemberRepositoryImpl implements MemberRepository {
         return memberJpaRepository.getReferenceById(id);
     }
 
+    @Override
+    public void save(Member member) {
+        memberJpaRepository.save(member);
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        memberJpaRepository.deleteAllInBatch();
+    }
 }

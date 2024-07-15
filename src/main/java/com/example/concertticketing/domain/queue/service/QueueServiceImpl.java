@@ -1,5 +1,7 @@
 package com.example.concertticketing.domain.queue.service;
 
+import com.example.concertticketing.domain.exception.CustomException;
+import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.member.service.MemberService;
 import com.example.concertticketing.domain.queue.model.Queue;
@@ -34,10 +36,14 @@ public class QueueServiceImpl implements QueueService {
                 .orElseGet(() -> queueRepository.save(createWaitQueue(member)));
 
         List<Queue> queueList = queueRepository.findFirstWaitMember(QueueStatus.WAIT,PageRequest.of(0, 1));
-        Long position = queueList.size() > 0 ? myQueue.getId() - queueList.get(0).getId() : 0;
+        Long position = calculatePosition(queueList, myQueue);
 
         myQueue.updatePosition(position);
         return myQueue;
+    }
+
+    private Long calculatePosition(List<Queue> queueList, Queue myQueue) {
+        return (queueList.size() > 0 && myQueue.getId() - queueList.get(0).getId() > 0) ? myQueue.getId() - queueList.get(0).getId() : 0;
     }
 
     /**
@@ -49,8 +55,6 @@ public class QueueServiceImpl implements QueueService {
 
     /**
      * ACTIVE 인 토큰의 상태를 EXPIRED 로 변경
-     * prev : ACTIVE
-     * change : EXPIRED
      * */
     @Transactional
     @Override
@@ -58,42 +62,42 @@ public class QueueServiceImpl implements QueueService {
         queueRepository.updateActiveTokenToExpired(time);
     }
 
+    @Transactional
     @Override
     public Queue getInfo(Long memberId) {
         List<Queue> queueList = queueRepository.findFirstWaitMember(QueueStatus.WAIT,PageRequest.of(0, 1));
         Queue myQueue = queueRepository.findValidTokenByMemberId(memberId, QueueStatus.EXPIRED)
-                .orElseThrow(() -> new NullPointerException("유효한 토큰이 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorEnum.TOKEN_EXPIRED));
 
-        Long position = (queueList.size() > 0 && myQueue.getId() - queueList.get(0).getId() > 0) ? myQueue.getId() - queueList.get(0).getId() : 0;
+        Long position = calculatePosition(queueList, myQueue);
         myQueue.updatePosition(position);
         return myQueue;
     }
 
     /**
      * 동시 접속 가능한 인원은 10명 이라고 가정
-     * prev : WAIT
-     * change : ACTIVE
      * */
     @Transactional
     @Override
-    public void updateWaitTokenToActive(LocalDateTime now) {
-        int available = 10;
+    public void updateWaitTokenToActive(LocalDateTime now, int available) {
         int count = queueRepository.countActiveMember(QueueStatus.ACTIVE);
 
         if (count == available) {
-            return;
+            throw new CustomException(ErrorEnum.NO_MORE_ACTIVE_TOKEN);
         }
 
         queueRepository.findWaitMemberList(QueueStatus.WAIT, PageRequest.of(0, available - count)).stream()
                 .forEach(queue -> {
                     queue.updateStatus(QueueStatus.ACTIVE);
-                    queue.updateExpiredAt(LocalDateTime.now().plusSeconds(10));
+                    queue.updateExpiredAt(now.plusSeconds(10));
                 });
     }
 
+    @Transactional
+    @Override
     public void expiredToken(Long memberId, QueueStatus status) {
         Queue token = queueRepository.findActiveTokenByMemberId(memberId, QueueStatus.ACTIVE)
-                .orElseThrow(() -> new NullPointerException("유효한 토큰이 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorEnum.TOKEN_EXPIRED));
         token.updateStatus(status);
     }
 

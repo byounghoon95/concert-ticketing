@@ -8,4 +8,8 @@ import java.util.Optional;
 public interface MemberRepository {
     Optional<Member> findById(Long memberId);
     Member getReferenceById(Long id);
+    void save(Member member);
+
+    void deleteAllInBatch();
+
 }
