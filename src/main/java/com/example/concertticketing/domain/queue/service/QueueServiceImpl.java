@@ -64,7 +64,7 @@ public class QueueServiceImpl implements QueueService {
         Queue myQueue = queueRepository.findValidTokenByMemberId(memberId, QueueStatus.EXPIRED)
                 .orElseThrow(() -> new NullPointerException("유효한 토큰이 없습니다"));
 
-        Long position = queueList.size() > 0 ? myQueue.getId() - queueList.get(0).getId() : 0;
+        Long position = (queueList.size() > 0 && myQueue.getId() - queueList.get(0).getId() > 0) ? myQueue.getId() - queueList.get(0).getId() : 0;
         myQueue.updatePosition(position);
         return myQueue;
     }

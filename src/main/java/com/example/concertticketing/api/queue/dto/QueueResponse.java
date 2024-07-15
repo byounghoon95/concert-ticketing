@@ -1,6 +1,7 @@
 package com.example.concertticketing.api.queue.dto;
 
 import com.example.concertticketing.domain.queue.model.Queue;
+import com.example.concertticketing.domain.queue.model.QueueStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,12 +14,14 @@ public class QueueResponse {
     UUID token;
     Long memberId;
     Long position;
+    QueueStatus status;
 
     @Builder
-    public QueueResponse(UUID token, Long memberId, Long position) {
+    public QueueResponse(UUID token, Long memberId, Long position, QueueStatus status) {
         this.token = token;
         this.memberId = memberId;
         this.position = position;
+        this.status = status;
     }
 
     public static QueueResponse of(Queue queue) {
@@ -26,6 +29,7 @@ public class QueueResponse {
                 .token(queue.getToken())
                 .memberId(queue.getMember().getId())
                 .position(queue.getPosition())
+                .status(queue.getStatus())
                 .build();
     }
 }
