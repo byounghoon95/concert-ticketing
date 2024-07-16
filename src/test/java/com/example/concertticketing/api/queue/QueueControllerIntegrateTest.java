@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * + 2L ~ 5L : 활성 토큰 조회
  * + 6L ~ 8L : 대기 토큰 조회
  * */
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class QueueControllerIntegrateTest {
     @Autowired
     private QueueService queueService;

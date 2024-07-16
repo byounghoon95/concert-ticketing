@@ -22,7 +22,8 @@ public class ConcertController {
      * */
     @GetMapping("/date/{concertId}")
     public ResponseEntity<ConcertDate> getAvailableDates(@PathVariable("concertId") Long concertId) {
-        return ResponseEntity.ok(concertService.selectAvailableDates(concertId));
+        ConcertDate concertDate = concertService.selectAvailableDates(concertId);
+        return ResponseEntity.ok(concertDate);
     }
 
     /**
