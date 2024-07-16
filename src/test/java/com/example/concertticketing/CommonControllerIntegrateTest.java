@@ -7,6 +7,7 @@ import com.example.concertticketing.domain.concert.repository.ConcertRepository;
 import com.example.concertticketing.domain.concert.repository.SeatRepository;
 import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.member.repository.MemberRepository;
+import com.example.concertticketing.domain.member.service.MemberService;
 import com.example.concertticketing.domain.queue.model.Queue;
 import com.example.concertticketing.domain.queue.model.QueueStatus;
 import com.example.concertticketing.domain.queue.repository.QueueRepository;
@@ -34,6 +35,9 @@ public abstract class CommonControllerIntegrateTest {
 
     @Autowired
     protected QueueService queueService;
+
+    @Autowired
+    protected MemberService memberService;
 
     @Autowired
     protected QueueRepository queueRepository;
@@ -126,6 +130,15 @@ public abstract class CommonControllerIntegrateTest {
                     .build();
             seatRepository.save(seat);
         }
+    }
+
+    protected void setUpMember() {
+            Member member = Member.builder()
+                    .memberLoginId("A1")
+                    .balance(Long.valueOf(5000))
+                    .build();
+
+        memberRepository.save(member);
     }
 
     protected Long findFirstMemberId() {
