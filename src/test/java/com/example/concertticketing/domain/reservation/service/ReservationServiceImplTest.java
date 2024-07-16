@@ -3,6 +3,7 @@ package com.example.concertticketing.domain.reservation.service;
 import com.example.concertticketing.domain.concert.model.ConcertDetail;
 import com.example.concertticketing.domain.concert.model.Seat;
 import com.example.concertticketing.domain.concert.service.SeatServiceImpl;
+import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.reservation.model.Reservation;
 import com.example.concertticketing.domain.reservation.model.ReservationStatus;
 import com.example.concertticketing.domain.reservation.repository.ReservationRepository;
@@ -33,10 +34,14 @@ class ReservationServiceImplTest {
     void reserveSeat() {
         // given
         Long seatId = 1L;
+        Member member = Member.builder()
+                .id(1L)
+                .build();
         ConcertDetail concert = ConcertDetail.builder()
                 .name("A1")
                 .build();
         Seat seat = Seat.builder()
+                .member(member)
                 .concert(concert)
                 .build();
 
