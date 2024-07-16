@@ -5,6 +5,7 @@ import com.example.concertticketing.domain.member.model.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -24,8 +25,13 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void save(Member member) {
-        memberJpaRepository.save(member);
+    public Member save(Member member) {
+        return memberJpaRepository.save(member);
+    }
+
+    @Override
+    public void saveAll(List<Member> member) {
+        memberJpaRepository.saveAll(member);
     }
 
     @Override

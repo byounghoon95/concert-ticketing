@@ -24,6 +24,11 @@ public class QueueRepositoryImpl implements QueueRepository {
     }
 
     @Override
+    public void saveAll(List<Queue> queue) {
+        queueJpaRepository.saveAll(queue);
+    }
+
+    @Override
     public Optional<Queue> findValidTokenByMemberId(Long memberId, QueueStatus status) {
         return queueJpaRepository.findByMemberIdAndStatusNot(memberId, status);
     }
