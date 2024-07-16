@@ -36,8 +36,8 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
-    public void saveConcertDetail(ConcertDetail concertDetail) {
-        concertDetailJpaRepository.save(concertDetail);
+    public void saveConcertDetailAll(List<ConcertDetail> detailList) {
+        concertDetailJpaRepository.saveAll(detailList);
     }
 
     @Override

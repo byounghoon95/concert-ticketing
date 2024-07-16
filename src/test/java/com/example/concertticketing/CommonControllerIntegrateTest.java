@@ -8,10 +8,12 @@ import com.example.concertticketing.domain.concert.repository.SeatRepository;
 import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.member.repository.MemberRepository;
 import com.example.concertticketing.domain.member.service.MemberService;
+import com.example.concertticketing.domain.pay.repository.PayRepository;
 import com.example.concertticketing.domain.queue.model.Queue;
 import com.example.concertticketing.domain.queue.model.QueueStatus;
 import com.example.concertticketing.domain.queue.repository.QueueRepository;
 import com.example.concertticketing.domain.queue.service.QueueService;
+import com.example.concertticketing.domain.reservation.model.Reservation;
 import com.example.concertticketing.domain.reservation.repository.ReservationRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +25,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class CommonControllerIntegrateTest {
@@ -57,143 +59,189 @@ public abstract class CommonControllerIntegrateTest {
     protected ReservationRepository reservationRepository;
 
     @Autowired
+    protected PayRepository payRepository;
+
+    @Autowired
     protected EntityManager entityManager;
 
+    public Member createMember(String loginId, Long balance) {
+        return Member.builder()
+                .memberLoginId(loginId)
+                .balance(balance)
+                .build();
+    }
+
+    public Queue createQueue(Member member, QueueStatus status, LocalDateTime expiredAt) {
+        return Queue.builder()
+                .token(UUID.randomUUID())
+                .member(member)
+                .status(status)
+                .expiredAt(expiredAt)
+                .build();
+    }
+
+    public Concert createConcert(String singer) {
+        return Concert.builder()
+                .singer(singer)
+                .build();
+    }
+
+    public ConcertDetail createConcertDetail(Concert concert, String name, LocalDateTime date) {
+        return ConcertDetail.builder()
+                .concert(concert)
+                .name(name)
+                .date(date)
+                .build();
+    }
+
+    public Seat createSeat(ConcertDetail concertDetail, Member member, int seatNo, Long price, LocalDateTime reservedAt) {
+        return Seat.builder()
+                .concert(concertDetail)
+                .member(member)
+                .seatNo(seatNo)
+                .price(price)
+                .reservedAt(reservedAt)
+                .build();
+    }
+
+    public Reservation createReservation(Member member, Seat seat, Long price) {
+        return Reservation.builder()
+                .memberId(member.getId())
+                .seat(seat)
+                .price(price)
+                .build();
+    }
+
     protected void setUpQueue() {
-        List<Queue> queueList = new ArrayList<>();
-        List<Member> memberList = new ArrayList<>();
-        for (int i = 0; i < 9; i++) {
-            Member member = Member.builder()
-                    .memberLoginId("A" + i)
-                    .balance(Long.valueOf(i * 1000))
-                    .build();
-            memberList.add(member);
+        List<Member> memberList = List.of(
+                createMember("A1", 5000L),
+                createMember("A2", 4000L),
+                createMember("A3", 4000L),
+                createMember("A4", 4000L),
+                createMember("A5", 4000L),
+                createMember("A6", 3000L)
+        );
 
-            QueueStatus status;
-            LocalDateTime time = null;
-            if (i < 3) {
-                status = QueueStatus.EXPIRED;
-                time = LocalDateTime.of(2024, 6, 12, 0, 0, 0);
-            } else if (i < 6) {
-                status = QueueStatus.ACTIVE;
-                time = LocalDateTime.of(2024, 6, 12, 0, 5, 0);
-            } else {
-                status = QueueStatus.WAIT;
-            }
+        List<Queue> queueList = List.of(
+                createQueue(memberList.get(0), QueueStatus.EXPIRED, LocalDateTime.of(2024, 6, 12, 0, 0, 0)),
+                createQueue(memberList.get(1), QueueStatus.EXPIRED, LocalDateTime.of(2024, 6, 12, 0, 0, 0)),
+                createQueue(memberList.get(2), QueueStatus.ACTIVE, LocalDateTime.of(2024, 6, 12, 0, 5, 0)),
+                createQueue(memberList.get(3), QueueStatus.ACTIVE, LocalDateTime.of(2024, 6, 12, 0, 5, 0)),
+                createQueue(memberList.get(4), QueueStatus.WAIT, null),
+                createQueue(memberList.get(5), QueueStatus.WAIT, null)
+        );
 
-            Queue queue = Queue.builder()
-                    .token(UUID.randomUUID())
-                    .member(member)
-                    .expiredAt(time)
-                    .status(status)
-                    .build();
-            queueList.add(queue);
-        }
         memberRepository.saveAll(memberList);
         queueRepository.saveAll(queueList);
     }
 
     protected void setUpConcert() {
-        Member member = Member.builder()
-                .memberLoginId("A1")
-                .build();
-
+        Member member = createMember("A1", 5000L);
         memberRepository.save(member);
 
-        Queue queue = Queue.builder()
-                .token(UUID.randomUUID())
-                .member(member)
-                .status(QueueStatus.WAIT)
-                .build();
-
+        Queue queue = createQueue(member, QueueStatus.WAIT, null);
         queueRepository.save(queue);
 
-        Concert concert = Concert.builder()
-                .singer("박효신")
-                .build();
+        Concert concert = createConcert("박효신");
         concertRepository.saveConcert(concert);
 
-        for (int j = 0; j < 3; j++) {
-            ConcertDetail concertDetail = ConcertDetail.builder()
-                    .concert(concert)
-                    .name(concert.getSinger() + (j + 1))
-                    .date(LocalDateTime.of(2024, 6, 12, 0, 0, 0).plusDays(j))
-                    .build();
-            concertRepository.saveConcertDetail(concertDetail);
-        }
+        List<ConcertDetail> detailList = List.of(
+                createConcertDetail(concert, concert.getSinger(), LocalDateTime.of(2024, 6, 12, 0, 0, 0)),
+                createConcertDetail(concert, concert.getSinger(), LocalDateTime.of(2024, 6, 12, 0, 0, 0).plusDays(1)),
+                createConcertDetail(concert, concert.getSinger(), LocalDateTime.of(2024, 6, 12, 0, 0, 0).plusDays(2))
+        );
 
-        Long concertDetailId = findFirstConcertDetailId();
-        ConcertDetail concertDetail = ConcertDetail.builder()
-                .id(concertDetailId)
-                .build();
-        for (int k = 0; k < 5; k++) {
-            Seat seat = Seat.builder()
-                    .concert(concertDetail)
-                    .member(member)
-                    .seatNo(k + 1)
-                    .price((long) (1000 * (k + 1)))
-                    .build();
-            seatRepository.save(seat);
-        }
+        concertRepository.saveConcertDetailAll(detailList);
+
+        ConcertDetail concertDetail = findFirstConcertDetail();
+        List<Seat> seatList = List.of(
+                createSeat(concertDetail, null, 1, 5000L, null),
+                createSeat(concertDetail, null, 2, 5000L, null),
+                createSeat(concertDetail, null, 3, 5000L, null),
+                createSeat(concertDetail, null, 4, 5000L, null),
+                createSeat(concertDetail, null, 5, 5000L, null)
+        );
+        seatRepository.saveAll(seatList);
     }
 
     protected void setUpMember() {
-        Member member = Member.builder()
-                .memberLoginId("A1")
-                .balance(Long.valueOf(5000))
-                .build();
-
+        Member member = createMember("A1", 5000L);
         memberRepository.save(member);
     }
 
     protected void setUpReservation() {
-        Member member = Member.builder()
-                .memberLoginId("A1")
-                .build();
-
+        Member member = createMember("A1", 5000L);
         memberRepository.save(member);
 
-        Queue queue = Queue.builder()
-                .token(UUID.randomUUID())
-                .member(member)
-                .status(QueueStatus.WAIT)
-                .build();
-
+        Queue queue = createQueue(member, QueueStatus.WAIT, null);
         queueRepository.save(queue);
 
-        Concert concert = Concert.builder()
-                .singer("박효신")
-                .build();
+        Concert concert = createConcert("박효신");
         concertRepository.saveConcert(concert);
 
-        for (int j = 0; j < 2; j++) {
-            ConcertDetail concertDetail = ConcertDetail.builder()
-                    .concert(concert)
-                    .name(concert.getSinger() + (j + 1))
-                    .date(LocalDateTime.of(2024, 6, 12, 0, 0, 0).plusDays(j))
-                    .build();
-            concertRepository.saveConcertDetail(concertDetail);
-        }
+        List<ConcertDetail> detailList = List.of(
+                createConcertDetail(concert, concert.getSinger(), LocalDateTime.of(2024, 6, 12, 0, 0, 0)),
+                createConcertDetail(concert, concert.getSinger(), LocalDateTime.of(2024, 6, 12, 0, 0, 0).plusDays(1)),
+                createConcertDetail(concert, concert.getSinger(), LocalDateTime.of(2024, 6, 12, 0, 0, 0).plusDays(2))
+        );
 
-        Long concertDetailId = findFirstConcertDetailId();
-        ConcertDetail concertDetail = ConcertDetail.builder()
-                .id(concertDetailId)
-                .build();
+        concertRepository.saveConcertDetailAll(detailList);
 
-        for (int k = 0; k < 2; k++) {
-            LocalDateTime reservedAt = null;
-            if (k == 1) {
-                reservedAt = LocalDateTime.now().plusMinutes(6);
-            }
-            Seat seat = Seat.builder()
-                    .concert(concertDetail)
-                    .member(member)
-                    .seatNo(k + 1)
-                    .price((long) (1000 * (k + 1)))
-                    .reservedAt(reservedAt)
-                    .build();
-            seatRepository.save(seat);
-        }
+        ConcertDetail concertDetail = findFirstConcertDetail();
+        List<Seat> seatList = List.of(
+                createSeat(concertDetail, null, 1, 5000L, null),
+                createSeat(concertDetail, null, 2, 5000L, LocalDateTime.now().plusMinutes(6))
+        );
+        seatRepository.saveAll(seatList);
+    }
+
+    protected void setUpPay() {
+        Member member = createMember("A1", 5000L);
+        memberRepository.save(member);
+
+        Queue queue = createQueue(member, QueueStatus.WAIT, null);
+        queueRepository.save(queue);
+
+        Concert concert = createConcert("박효신");
+        concertRepository.saveConcert(concert);
+
+        List<ConcertDetail> detailList = List.of(
+                createConcertDetail(concert, concert.getSinger(), LocalDateTime.of(2024, 6, 12, 0, 0, 0)),
+                createConcertDetail(concert, concert.getSinger(), LocalDateTime.of(2024, 6, 12, 0, 0, 0).plusDays(1)),
+                createConcertDetail(concert, concert.getSinger(), LocalDateTime.of(2024, 6, 12, 0, 0, 0).plusDays(2))
+        );
+
+        concertRepository.saveConcertDetailAll(detailList);
+
+//        Long concertDetailId = findFirstConcertDetailId();
+//        ConcertDetail concertDetail = ConcertDetail.builder()
+//                .id(concertDetailId)
+//                .build();
+//
+//        for (int k = 0; k < 2; k++) {
+//            LocalDateTime reservedAt = null;
+//            if (k == 1) {
+//                reservedAt = LocalDateTime.now().plusMinutes(6);
+//            }
+//            Seat seat = Seat.builder()
+//                    .concert(concertDetail)
+//                    .member(member)
+//                    .seatNo(k + 1)
+//                    .price((long) (1000 * (k + 1)))
+//                    .reservedAt(reservedAt)
+//                    .build();
+//            seatRepository.save(seat);
+//
+//            if (k == 1) {
+//                Reservation reservation = Reservation.builder()
+//                        .memberId(savedMember.getId())
+//                        .seat(seat)
+//                        .seatNo(k + 1)
+//                        .price(5000L)
+//                        .build();
+//                reservationRepository.save(reservation);
+//            }
+//        }
     }
 
     protected Long findFirstMemberId() {
@@ -211,8 +259,23 @@ public abstract class CommonControllerIntegrateTest {
                 .getSingleResult();
     }
 
+    protected ConcertDetail findFirstConcertDetail() {
+        return (ConcertDetail) entityManager.createNativeQuery("SELECT * FROM CONCERT_DETAIL LIMIT 1", ConcertDetail.class)
+                .getSingleResult();
+    }
+
     protected Seat findFirstSeat() {
         return (Seat) entityManager.createNativeQuery("SELECT * FROM SEAT LIMIT 1", Seat.class)
+                .getSingleResult();
+    }
+
+    protected Long findFirstReservationId() {
+        return (Long) entityManager.createNativeQuery("SELECT id FROM RESERVATION LIMIT 1")
+                .getSingleResult();
+    }
+
+    protected Long findFirstQueueId() {
+        return (Long) entityManager.createNativeQuery("SELECT id FROM QUEUE LIMIT 1")
                 .getSingleResult();
     }
 
@@ -227,6 +290,13 @@ public abstract class CommonControllerIntegrateTest {
     protected <T> HttpEntity<T> setHeader(Long memberId, T body) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("memberId", String.valueOf(memberId));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return new HttpEntity<>(body, headers);
+    }
+
+    protected <T> HttpEntity<T> setHeaderNoCheck(T body) {
+        HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         return new HttpEntity<>(body, headers);

@@ -34,8 +34,9 @@ class ReservationServiceImplTest {
     void reserveSeat() {
         // given
         Long seatId = 1L;
+        Long memberId = 1L;
         Member member = Member.builder()
-                .id(1L)
+                .id(memberId)
                 .build();
         ConcertDetail concert = ConcertDetail.builder()
                 .name("A1")
@@ -49,7 +50,7 @@ class ReservationServiceImplTest {
         when(seatService.selectSeat(any())).thenReturn(seat);
         when(reservationRepository.reserveSeat(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Reservation response = reservationService.reserveSeat(seatId);
+        Reservation response = reservationService.reserveSeat(seatId,memberId);
 
         // then
         assertThat(response.getStatus()).isEqualTo(ReservationStatus.RESERVED);

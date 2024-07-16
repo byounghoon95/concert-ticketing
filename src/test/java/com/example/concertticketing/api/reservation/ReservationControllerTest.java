@@ -26,7 +26,7 @@ class ReservationControllerTest extends CommonControllerTest {
         int seatNo = 2;
         ReservationStatus status = ReservationStatus.RESERVED;
 
-        ReserveSeatRequest request = new ReserveSeatRequest(seatId);
+        ReserveSeatRequest request = new ReserveSeatRequest(seatId,memberId);
         Reservation reservation = Reservation.builder()
                 .seatNo(seatNo)
                 .status(status)
@@ -34,7 +34,7 @@ class ReservationControllerTest extends CommonControllerTest {
 
         // when
         when(queueService.verify(memberId)).thenReturn(true);
-        when(reservationService.reserveSeat(any())).thenReturn(reservation);
+        when(reservationService.reserveSeat(any(),any())).thenReturn(reservation);
 
         // then
         mockMvc.perform(post("/api/reserve")

@@ -7,4 +7,6 @@ public interface MemberService {
     Member getReferenceById(Long memberId);
     Member getBalance(Long memberId);
     Member chargeBalance(MemberChargeRequest request);
+
+    Member findById(Long memberId);
 }
