@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface SeatRepository {
     Optional<Seat> findById(Long seatId);
+    Seat save(Seat seat);
 }
