@@ -1,25 +1,22 @@
 package com.example.concertticketing.api.queue;
 
 import com.example.concertticketing.CommonControllerIntegrateTest;
-import com.example.concertticketing.domain.exception.CustomException;
+import com.example.concertticketing.api.common.response.CommonResponse;
+import com.example.concertticketing.api.queue.dto.QueueRequest;
+import com.example.concertticketing.api.queue.dto.QueueResponse;
 import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.example.concertticketing.domain.queue.model.Queue;
 import com.example.concertticketing.domain.queue.model.QueueStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * findFirstMemberId, findFirstQueueId
- * + 0 ~ 2L : 만료 토근 조회
- * + 2L ~ 5L : 활성 토큰 조회
- * + 6L ~ 8L : 대기 토큰 조회
- * */
 public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest {
     @AfterEach
     void tearDown() {
@@ -32,15 +29,22 @@ public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest 
     void enqueue_no_wait_member() {
         // given
         Long memberId = 1L;
+        String url = "http://localhost:" + port + "/api/queue/issue";
+
+        QueueRequest request = new QueueRequest(memberId);
 
         // when
-        Queue queue = queueService.enqueue(memberId);
+        HttpEntity<QueueRequest> header = setHeaderNoCheck(request);
+        ResponseEntity<CommonResponse<QueueResponse>> response = restTemplate.exchange(url, HttpMethod.POST, header, new ParameterizedTypeReference<>() {});
+        CommonResponse<QueueResponse> body = response.getBody();
+        QueueResponse data = body.getData();
 
         // then
-        assertThat(queue.getId()).isEqualTo(1L);
-        assertThat(queue.getToken()).isInstanceOf(UUID.class);
-        assertThat(queue.getStatus()).isEqualTo(QueueStatus.WAIT);
-        assertThat(queue.getPosition()).isEqualTo(0L);
+        assertThat(body.getCode()).isEqualTo(ErrorEnum.SUCCESS.getCode());
+        assertThat(body.getMessage()).isEqualTo(ErrorEnum.SUCCESS.getMessage());
+        assertThat(data.getMemberId()).isEqualTo(memberId);
+        assertThat(data.getStatus()).isEqualTo(QueueStatus.WAIT);
+        assertThat(data.getPosition()).isEqualTo(0L);
     }
 
     @DisplayName("대기중인 사람이 있고 새로운 유저가 토큰을 발급한다")
@@ -48,15 +52,23 @@ public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest 
     void enqueue_wait_member_exist() {
         // given
         setUpQueue();
-        Long memberId = findFirstMemberId() + 10L;
+        Long memberId = findFirstMemberId() + 6L;
+        String url = "http://localhost:" + port + "/api/queue/issue";
+
+        QueueRequest request = new QueueRequest(memberId);
 
         // when
-        Queue queue = queueService.enqueue(memberId);
+        HttpEntity<QueueRequest> header = setHeaderNoCheck(request);
+        ResponseEntity<CommonResponse<QueueResponse>> response = restTemplate.exchange(url, HttpMethod.POST, header, new ParameterizedTypeReference<>() {});
+        CommonResponse<QueueResponse> body = response.getBody();
+        QueueResponse data = body.getData();
 
         // then
-        assertThat(queue.getToken()).isInstanceOf(UUID.class);
-        assertThat(queue.getStatus()).isEqualTo(QueueStatus.WAIT);
-        assertThat(queue.getPosition()).isEqualTo(3L);
+        assertThat(body.getCode()).isEqualTo(ErrorEnum.SUCCESS.getCode());
+        assertThat(body.getMessage()).isEqualTo(ErrorEnum.SUCCESS.getMessage());
+        assertThat(data.getMemberId()).isEqualTo(memberId);
+        assertThat(data.getStatus()).isEqualTo(QueueStatus.WAIT);
+        assertThat(data.getPosition()).isEqualTo(2L);
     }
 
     @DisplayName("토큰이 만료되지 않은 유저가 토큰을 재발급하면 원래 존재하는 토큰을 반환한다")
@@ -65,16 +77,23 @@ public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest 
         // given
         setUpQueue();
         Long memberId = findFirstMemberId() + 5L;
+        Long queueId = findFirstQueueId() + 5L;
+        String url = "http://localhost:" + port + "/api/queue/issue";
+
+        QueueRequest request = new QueueRequest(memberId);
 
         // when
-        Queue myQueue = queueRepository.findValidTokenByMemberId(memberId, QueueStatus.EXPIRED).get();
-        Queue newQueue = queueService.enqueue(memberId);
+        HttpEntity<QueueRequest> header = setHeaderNoCheck(request);
+        ResponseEntity<CommonResponse<QueueResponse>> response = restTemplate.exchange(url, HttpMethod.POST, header, new ParameterizedTypeReference<>() {});
+        CommonResponse<QueueResponse> body = response.getBody();
+        QueueResponse data = body.getData();
+
+        Queue queue = queueRepository.findById(queueId).get();
 
         // then
-        assertThat(myQueue.getToken()).isEqualTo(newQueue.getToken());
-        assertThat(myQueue.getStatus()).isEqualTo(newQueue.getStatus());
-        assertThat(newQueue.getPosition()).isEqualTo(0L);
-        assertThat(myQueue.getMember().getId()).isEqualTo(newQueue.getMember().getId());
+        assertThat(body.getCode()).isEqualTo(ErrorEnum.SUCCESS.getCode());
+        assertThat(body.getMessage()).isEqualTo(ErrorEnum.SUCCESS.getMessage());
+        assertThat(data.getToken()).isEqualTo(queue.getToken());
     }
 
     @DisplayName("active 상태인 현재 나의 토큰 정보를 반환한다")
@@ -82,17 +101,24 @@ public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest 
     void getInfo_active() {
         // given
         setUpQueue();
-        Long memberId = findFirstMemberId() + 5L;
+        Long memberId = findFirstMemberId() + 3L;
+        Long queueId = findFirstQueueId() + 3L;
+        String url = "http://localhost:" + port + "/api/queue/issue";
+
+        QueueRequest request = new QueueRequest(memberId);
 
         // when
-        Queue myQueue = queueRepository.findValidTokenByMemberId(memberId, QueueStatus.EXPIRED).get();
-        Queue newQueue = queueService.getInfo(memberId);
+        HttpEntity<QueueRequest> header = setHeaderNoCheck(request);
+        ResponseEntity<CommonResponse<QueueResponse>> response = restTemplate.exchange(url, HttpMethod.POST, header, new ParameterizedTypeReference<>() {});
+        CommonResponse<QueueResponse> body = response.getBody();
+        QueueResponse data = body.getData();
+
+        Queue queue = queueRepository.findById(queueId).get();
 
         // then
-        assertThat(myQueue.getToken()).isEqualTo(newQueue.getToken());
-        assertThat(myQueue.getStatus()).isEqualTo(newQueue.getStatus());
-        assertThat(newQueue.getPosition()).isEqualTo(0L);
-        assertThat(myQueue.getMember().getId()).isEqualTo(newQueue.getMember().getId());
+        assertThat(body.getCode()).isEqualTo(ErrorEnum.SUCCESS.getCode());
+        assertThat(body.getMessage()).isEqualTo(ErrorEnum.SUCCESS.getMessage());
+        assertThat(data.getToken()).isEqualTo(queue.getToken());
     }
 
     @DisplayName("wait 상태인 현재 나의 토큰 정보를 반환한다")
@@ -100,17 +126,24 @@ public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest 
     void getInfo_wait() {
         // given
         setUpQueue();
-        Long memberId = findFirstMemberId() + 8L;
+        Long memberId = findFirstMemberId() + 5L;
+        Long queueId = findFirstQueueId() + 5L;
+        String url = "http://localhost:" + port + "/api/queue/issue";
+
+        QueueRequest request = new QueueRequest(memberId);
 
         // when
-        Queue myQueue = queueRepository.findValidTokenByMemberId(memberId, QueueStatus.EXPIRED).get();
-        Queue newQueue = queueService.getInfo(memberId);
+        HttpEntity<QueueRequest> header = setHeaderNoCheck(request);
+        ResponseEntity<CommonResponse<QueueResponse>> response = restTemplate.exchange(url, HttpMethod.POST, header, new ParameterizedTypeReference<>() {});
+        CommonResponse<QueueResponse> body = response.getBody();
+        QueueResponse data = body.getData();
+
+        Queue queue = queueRepository.findById(queueId).get();
 
         // then
-        assertThat(myQueue.getToken()).isEqualTo(newQueue.getToken());
-        assertThat(myQueue.getStatus()).isEqualTo(newQueue.getStatus());
-        assertThat(newQueue.getPosition()).isEqualTo(2L);
-        assertThat(myQueue.getMember().getId()).isEqualTo(newQueue.getMember().getId());
+        assertThat(body.getCode()).isEqualTo(ErrorEnum.SUCCESS.getCode());
+        assertThat(body.getMessage()).isEqualTo(ErrorEnum.SUCCESS.getMessage());
+        assertThat(data.getToken()).isEqualTo(queue.getToken());
     }
 
     @DisplayName("토큰 정보 조회 시 토큰이 만료되어 에러를 반환한다")
@@ -119,10 +152,15 @@ public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest 
         // given
         setUpQueue();
         Long memberId = findFirstMemberId();
+        String url = "http://localhost:" + port + "/api/queue/" + memberId;
 
-        // when then
-        assertThatThrownBy(() -> queueService.getInfo(memberId))
-                .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorEnum.TOKEN_EXPIRED.getMessage());
+        // when
+        ResponseEntity<CommonResponse<QueueResponse>> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(null), new ParameterizedTypeReference<>() {});
+        CommonResponse<QueueResponse> body = response.getBody();
+        QueueResponse data = body.getData();
+
+        // then
+        assertThat(body.getCode()).isEqualTo(ErrorEnum.TOKEN_EXPIRED.getCode());
+        assertThat(body.getMessage()).isEqualTo(ErrorEnum.TOKEN_EXPIRED.getMessage());
     }
 }

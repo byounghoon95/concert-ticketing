@@ -2,6 +2,7 @@ package com.example.concertticketing.domain.concert.service;
 
 import com.example.concertticketing.domain.concert.model.Seat;
 import com.example.concertticketing.domain.concert.repository.SeatRepository;
+import com.example.concertticketing.domain.member.model.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,5 +26,12 @@ public class SeatServiceImpl implements SeatService {
     public void updateReservedAt(Long seatId, LocalDateTime now) {
         Seat seat = selectSeat(seatId);
         seat.updateReservedAt(now);
+    }
+
+    @Transactional
+    @Override
+    public void updateMember(Long seatId, Member member) {
+        Seat seat = selectSeat(seatId);
+        seat.updateMember(member);
     }
 }

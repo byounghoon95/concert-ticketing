@@ -32,7 +32,7 @@ public class ReservationControllerIntegrateTest extends CommonControllerIntegrat
         Long seatId = seat.getId();
         String url = "http://localhost:" + port + "/api/reserve";
 
-        ReserveSeatRequest request = new ReserveSeatRequest(seatId);
+        ReserveSeatRequest request = new ReserveSeatRequest(seatId,memberId);
 
         // when
         HttpEntity<ReserveSeatRequest> header = setHeader(memberId, request);
@@ -48,6 +48,7 @@ public class ReservationControllerIntegrateTest extends CommonControllerIntegrat
         assertThat(data.getSeatNo()).isEqualTo(seat.getSeatNo());
         assertThat(data.getStatus()).isEqualTo(ReservationStatus.RESERVED);
 
+        assertThat(updatedSeat.getMember().getId()).isEqualTo(memberId);
         assertThat(seat.getReservedAt()).isNull();
         assertThat(updatedSeat.getReservedAt()).isNotNull();
     }
@@ -61,7 +62,7 @@ public class ReservationControllerIntegrateTest extends CommonControllerIntegrat
         Long seatId = seat.getId();
         String url = "http://localhost:" + port + "/api/reserve";
 
-        ReserveSeatRequest request = new ReserveSeatRequest(seatId);
+        ReserveSeatRequest request = new ReserveSeatRequest(seatId,memberId);
 
         // when
         HttpEntity<ReserveSeatRequest> header = setHeader(memberId, request);

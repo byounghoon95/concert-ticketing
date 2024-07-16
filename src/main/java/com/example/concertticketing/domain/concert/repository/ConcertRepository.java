@@ -12,7 +12,8 @@ public interface ConcertRepository {
     List<ConcertDetail> findDatesByConcertId(Long concertId);
     List<Seat> findAvailableSeatsByConcertId(Long concertDetailId, LocalDateTime time);
     void saveConcert(Concert concert);
-    void saveConcertDetail(ConcertDetail concertDetail);
     void deleteAllInBatch();
+
+    void saveConcertDetailAll(List<ConcertDetail> detailList);
 
 }

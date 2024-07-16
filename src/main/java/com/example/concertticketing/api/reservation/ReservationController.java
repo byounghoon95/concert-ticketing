@@ -22,6 +22,6 @@ public class ReservationController {
      * */
     @PostMapping("")
     public ResponseEntity<ReserveSeatResponse> reserveSeat(@RequestBody ReserveSeatRequest request) {
-        return ResponseEntity.ok(ReserveSeatResponse.of(reservationService.reserveSeat(request.seatId())));
+        return ResponseEntity.ok(ReserveSeatResponse.of(reservationService.reserveSeat(request.seatId(), request.memberId())));
     }
 }

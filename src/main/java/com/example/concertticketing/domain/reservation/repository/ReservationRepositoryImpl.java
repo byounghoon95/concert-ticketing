@@ -21,4 +21,14 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         return reservationJpaRepository.findById(reservationId)
                 .orElseThrow(() -> new NullPointerException("일치하는 예약번호가 없습니다"));
     }
+
+    @Override
+    public Reservation save(Reservation reservation) {
+        return reservationJpaRepository.save(reservation);
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        reservationJpaRepository.deleteAllInBatch();
+    }
 }
