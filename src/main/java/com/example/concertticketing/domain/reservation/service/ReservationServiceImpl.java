@@ -28,7 +28,8 @@ public class ReservationServiceImpl implements ReservationService {
         LocalDateTime reservedAt = seat.getReservedAt();
         LocalDateTime now = LocalDateTime.now();
 
-        if (reservedAt != null && reservedAt.plusSeconds(15).isAfter(now)) {
+        // 5분동안 임시저장
+        if (reservedAt != null && reservedAt.plusMinutes(5).isAfter(now)) {
             throw new CustomException(ErrorEnum.RESERVED_SEAT);
         }
 

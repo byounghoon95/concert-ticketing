@@ -44,7 +44,7 @@ class ReservationControllerTest extends CommonControllerTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.seat").value(seatNo))
+                .andExpect(jsonPath("$.data.seatNo").value(seatNo))
                 .andExpect(jsonPath("$.data.status").value(status.toString()))
         ;
     }

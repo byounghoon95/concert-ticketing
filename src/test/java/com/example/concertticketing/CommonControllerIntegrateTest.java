@@ -12,6 +12,7 @@ import com.example.concertticketing.domain.queue.model.Queue;
 import com.example.concertticketing.domain.queue.model.QueueStatus;
 import com.example.concertticketing.domain.queue.repository.QueueRepository;
 import com.example.concertticketing.domain.queue.service.QueueService;
+import com.example.concertticketing.domain.reservation.repository.ReservationRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -50,6 +52,9 @@ public abstract class CommonControllerIntegrateTest {
 
     @Autowired
     protected SeatRepository seatRepository;
+
+    @Autowired
+    protected ReservationRepository reservationRepository;
 
     @Autowired
     protected EntityManager entityManager;
@@ -133,12 +138,62 @@ public abstract class CommonControllerIntegrateTest {
     }
 
     protected void setUpMember() {
-            Member member = Member.builder()
-                    .memberLoginId("A1")
-                    .balance(Long.valueOf(5000))
-                    .build();
+        Member member = Member.builder()
+                .memberLoginId("A1")
+                .balance(Long.valueOf(5000))
+                .build();
 
         memberRepository.save(member);
+    }
+
+    protected void setUpReservation() {
+        Member member = Member.builder()
+                .memberLoginId("A1")
+                .build();
+
+        memberRepository.save(member);
+
+        Queue queue = Queue.builder()
+                .token(UUID.randomUUID())
+                .member(member)
+                .status(QueueStatus.WAIT)
+                .build();
+
+        queueRepository.save(queue);
+
+        Concert concert = Concert.builder()
+                .singer("박효신")
+                .build();
+        concertRepository.saveConcert(concert);
+
+        for (int j = 0; j < 2; j++) {
+            ConcertDetail concertDetail = ConcertDetail.builder()
+                    .concert(concert)
+                    .name(concert.getSinger() + (j + 1))
+                    .date(LocalDateTime.of(2024, 6, 12, 0, 0, 0).plusDays(j))
+                    .build();
+            concertRepository.saveConcertDetail(concertDetail);
+        }
+
+        Long concertDetailId = findFirstConcertDetailId();
+        ConcertDetail concertDetail = ConcertDetail.builder()
+                .id(concertDetailId)
+                .build();
+
+        for (int k = 0; k < 2; k++) {
+            LocalDateTime reservedAt = null;
+            if (k == 1) {
+                reservedAt = LocalDateTime.now().plusMinutes(6);
+            }
+            Seat seat = Seat.builder()
+                    .concert(concertDetail)
+                    .member(member)
+                    .seatNo(k + 1)
+                    .price((long) (1000 * (k + 1)))
+                    .reservedAt(reservedAt)
+                    .build();
+            seatRepository.save(seat);
+        }
     }
 
     protected Long findFirstMemberId() {
@@ -156,11 +211,24 @@ public abstract class CommonControllerIntegrateTest {
                 .getSingleResult();
     }
 
+    protected Seat findFirstSeat() {
+        return (Seat) entityManager.createNativeQuery("SELECT * FROM SEAT LIMIT 1", Seat.class)
+                .getSingleResult();
+    }
+
     protected HttpEntity<String> setHeader(Long memberId) {
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.set("memberId", String.valueOf(memberId));
 
         return new HttpEntity<>(headers);
+    }
+
+    protected <T> HttpEntity<T> setHeader(Long memberId, T body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("memberId", String.valueOf(memberId));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return new HttpEntity<>(body, headers);
     }
 }
