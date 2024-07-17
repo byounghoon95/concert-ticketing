@@ -32,7 +32,7 @@ public class Reservation extends BaseEntity {
     int seatNo;
 
     @Column(name = "MEMBER_ID")
-    Long memberId;
+    private Long memberId;
 
     @Column(name = "CONCERT_PRICE")
     private Long price;
