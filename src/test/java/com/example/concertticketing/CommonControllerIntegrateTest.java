@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -28,7 +29,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-
+/**
+ * TestRestTemplate 사용 시 RANDOM_PORT 아니면 Bean 주입 안됨
+ * */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class CommonControllerIntegrateTest {
     @LocalServerPort
@@ -108,6 +111,7 @@ public abstract class CommonControllerIntegrateTest {
         return Reservation.builder()
                 .memberId(member.getId())
                 .seat(seat)
+                .seatNo(seat.getSeatNo())
                 .price(price)
                 .build();
     }
@@ -199,7 +203,7 @@ public abstract class CommonControllerIntegrateTest {
         Member member = createMember("A1", 5000L);
         memberRepository.save(member);
 
-        Queue queue = createQueue(member, QueueStatus.WAIT, null);
+        Queue queue = createQueue(member, QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1));
         queueRepository.save(queue);
 
         Concert concert = createConcert("박효신");
@@ -213,35 +217,15 @@ public abstract class CommonControllerIntegrateTest {
 
         concertRepository.saveConcertDetailAll(detailList);
 
-//        Long concertDetailId = findFirstConcertDetailId();
-//        ConcertDetail concertDetail = ConcertDetail.builder()
-//                .id(concertDetailId)
-//                .build();
-//
-//        for (int k = 0; k < 2; k++) {
-//            LocalDateTime reservedAt = null;
-//            if (k == 1) {
-//                reservedAt = LocalDateTime.now().plusMinutes(6);
-//            }
-//            Seat seat = Seat.builder()
-//                    .concert(concertDetail)
-//                    .member(member)
-//                    .seatNo(k + 1)
-//                    .price((long) (1000 * (k + 1)))
-//                    .reservedAt(reservedAt)
-//                    .build();
-//            seatRepository.save(seat);
-//
-//            if (k == 1) {
-//                Reservation reservation = Reservation.builder()
-//                        .memberId(savedMember.getId())
-//                        .seat(seat)
-//                        .seatNo(k + 1)
-//                        .price(5000L)
-//                        .build();
-//                reservationRepository.save(reservation);
-//            }
-//        }
+        ConcertDetail concertDetail = findFirstConcertDetail();
+        List<Seat> seatList = List.of(
+                createSeat(concertDetail, null, 1, 4000L, null),
+                createSeat(concertDetail, null, 2, 5000L, LocalDateTime.now().plusMinutes(6))
+        );
+        seatRepository.saveAll(seatList);
+
+        Reservation reservation = createReservation(member, seatList.get(1), 5000L);
+        reservationRepository.save(reservation);
     }
 
     protected Long findFirstMemberId() {
