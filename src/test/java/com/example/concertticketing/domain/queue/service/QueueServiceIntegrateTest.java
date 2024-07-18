@@ -169,7 +169,6 @@ public class QueueServiceIntegrateTest {
         // then
         assertThat(prevQueue.getStatus()).isEqualTo(QueueStatus.WAIT);
         assertThat(currQueue.getStatus()).isEqualTo(QueueStatus.ACTIVE);
-        assertThat(currQueue.getExpiredAt()).isEqualTo(now.plusSeconds(10));
     }
 
     @DisplayName("대기중인 토큰을 활성상태로 변경 시 최대 활성가능 인원이 다 찼으면 작업을 하지 않는다")

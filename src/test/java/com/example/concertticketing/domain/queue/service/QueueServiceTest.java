@@ -165,7 +165,7 @@ class QueueServiceTest {
 
         // when
         when(queueRepository.findFirstWaitMember(any(),any())).thenReturn(firstQueue);
-        when(queueRepository.findValidTokenByMemberId(any(), any())).thenReturn(Optional.of(myQueue));
+        when(queueRepository.findActiveTokenByMemberId(any(), any())).thenReturn(Optional.of(myQueue));
 
         Queue queue = queueService.getInfo(memberId);
 
@@ -183,10 +183,10 @@ class QueueServiceTest {
         Queue queue = Queue.builder()
                 .id(position)
                 .token(uuid)
-                .status(QueueStatus.WAIT)
+                .status(QueueStatus.ACTIVE)
                 .build();
 
-        when(queueRepository.findValidTokenByMemberId(any(),any())).thenReturn(Optional.of(queue));
+        when(queueRepository.findActiveTokenByMemberId(any(),any())).thenReturn(Optional.of(queue));
 
         boolean verification = queueService.verify(memberId);
 
@@ -201,7 +201,7 @@ class QueueServiceTest {
         Long memberId = 1L;
 
         // when
-        when(queueRepository.findValidTokenByMemberId(any(),any())).thenReturn(Optional.empty());
+        when(queueRepository.findActiveTokenByMemberId(any(),any())).thenReturn(Optional.empty());
 
         boolean verification = queueService.verify(memberId);
 

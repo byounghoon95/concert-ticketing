@@ -143,7 +143,7 @@ public abstract class CommonControllerIntegrateTest {
         Member member = createMember("A1", 5000L);
         memberRepository.save(member);
 
-        Queue queue = createQueue(member, QueueStatus.WAIT, null);
+        Queue queue = createQueue(member, QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1));
         queueRepository.save(queue);
 
         Concert concert = createConcert("박효신");
@@ -177,7 +177,7 @@ public abstract class CommonControllerIntegrateTest {
         Member member = createMember("A1", 5000L);
         memberRepository.save(member);
 
-        Queue queue = createQueue(member, QueueStatus.WAIT, null);
+        Queue queue = createQueue(member, QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1));
         queueRepository.save(queue);
 
         Concert concert = createConcert("박효신");

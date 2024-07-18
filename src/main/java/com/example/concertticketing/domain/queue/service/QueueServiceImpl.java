@@ -50,7 +50,7 @@ public class QueueServiceImpl implements QueueService {
      * 유효한 토큰이 존재하면 true, 존재하지 않으면 false
      * */
     public boolean verify(Long memberId) {
-        return queueRepository.findValidTokenByMemberId(memberId, QueueStatus.EXPIRED).isPresent();
+        return queueRepository.findActiveTokenByMemberId(memberId, QueueStatus.ACTIVE).isPresent();
     }
 
     /**
@@ -66,7 +66,7 @@ public class QueueServiceImpl implements QueueService {
     @Override
     public Queue getInfo(Long memberId) {
         List<Queue> queueList = queueRepository.findFirstWaitMember(QueueStatus.WAIT,PageRequest.of(0, 1));
-        Queue myQueue = queueRepository.findValidTokenByMemberId(memberId, QueueStatus.EXPIRED)
+        Queue myQueue = queueRepository.findActiveTokenByMemberId(memberId, QueueStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorEnum.TOKEN_EXPIRED));
 
         Long position = calculatePosition(queueList, myQueue);
@@ -89,7 +89,7 @@ public class QueueServiceImpl implements QueueService {
         queueRepository.findWaitMemberList(QueueStatus.WAIT, PageRequest.of(0, available - count)).stream()
                 .forEach(queue -> {
                     queue.updateStatus(QueueStatus.ACTIVE);
-                    queue.updateExpiredAt(now.plusSeconds(10));
+                    queue.updateExpiredAt(now.plusMinutes(1));
                 });
     }
 
