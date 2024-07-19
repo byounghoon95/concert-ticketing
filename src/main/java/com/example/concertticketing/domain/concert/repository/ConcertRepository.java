@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ConcertRepository {
-    List<ConcertDetail> findDatesByConcertId(Long concertId);
-    List<Seat> findAvailableSeatsByConcertId(Long concertDetailId, LocalDateTime time);
+    List<ConcertDetail> findConcertDates(Long concertId);
+    List<Seat> findAvailableSeats(Long concertDetailId, LocalDateTime time);
     void saveConcert(Concert concert);
     void deleteAllInBatch();
 

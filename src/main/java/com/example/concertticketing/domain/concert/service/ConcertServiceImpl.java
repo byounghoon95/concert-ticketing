@@ -5,8 +5,6 @@ import com.example.concertticketing.domain.concert.model.ConcertDateDetails;
 import com.example.concertticketing.domain.concert.model.ConcertSeat;
 import com.example.concertticketing.domain.concert.model.ConcertSeatDetail;
 import com.example.concertticketing.domain.concert.repository.ConcertRepository;
-import com.example.concertticketing.domain.exception.CustomException;
-import com.example.concertticketing.domain.exception.ErrorEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,18 +20,18 @@ public class ConcertServiceImpl implements ConcertService {
 
     private final ConcertRepository concertRepository;
 
-
     @Override
     public ConcertDate selectAvailableDates(Long concertId) {
-        List<ConcertDateDetails> details = concertRepository.findDatesByConcertId(concertId).stream()
+        List<ConcertDateDetails> details = concertRepository.findConcertDates(concertId).stream()
                 .map(entity -> new ConcertDateDetails(entity.getId(), entity.getDate()))
                 .collect(Collectors.toList());
         return new ConcertDate(concertId, details);
     }
 
+
     @Override
     public ConcertSeat selectAvailableSeats(Long concertDetailId) {
-        List<ConcertSeatDetail> details = concertRepository.findAvailableSeatsByConcertId(concertDetailId, LocalDateTime.now().minusSeconds(10)).stream()
+        List<ConcertSeatDetail> details = concertRepository.findAvailableSeats(concertDetailId, LocalDateTime.now().minusMinutes(5)).stream()
                 .map(entity -> new ConcertSeatDetail(entity.getId(), entity.getSeatNo()))
                 .collect(Collectors.toList());
         return new ConcertSeat(concertDetailId, details);

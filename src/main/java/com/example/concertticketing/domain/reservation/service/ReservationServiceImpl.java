@@ -28,13 +28,10 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation reserveSeat(Long seatId, Long memberId) {
         Seat seat = seatService.selectSeat(seatId);
-        LocalDateTime reservedAt = seat.getReservedAt();
-        LocalDateTime now = LocalDateTime.now();
 
         // 5분동안 임시저장
-        if (reservedAt != null && reservedAt.plusMinutes(5).isAfter(now)) {
-            throw new CustomException(ErrorEnum.RESERVED_SEAT);
-        }
+        LocalDateTime reservedAt = seat.getReservedAt();
+        Reservation.checkTempReserved(reservedAt);
 
         Member member = seat.getMember();
         if (seat.getMember() != null) {
@@ -43,19 +40,9 @@ public class ReservationServiceImpl implements ReservationService {
             member = memberService.findById(memberId);
         }
 
-        seatService.updateReservedAt(seatId, now);
-        seatService.updateMember(seatId, member);
+        seatService.reserveSeat(seatId, LocalDateTime.now(), member);
 
-
-        Reservation reservation = Reservation.builder()
-                .seat(seat)
-                .concertName(seat.getConcert().getName())
-                .price(seat.getPrice())
-                .seatNo(seat.getSeatNo())
-                .memberId(memberId)
-                .date(seat.getConcert().getDate())
-                .status(ReservationStatus.RESERVED)
-                .build();
+        Reservation reservation = Reservation.createReservation(seat, memberId);
 
         return reservationRepository.reserveSeat(reservation);
     }

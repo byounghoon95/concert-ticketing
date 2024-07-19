@@ -59,7 +59,7 @@ public class ReservationControllerIntegrateTest extends CommonControllerIntegrat
         setUpReservation();
         Long memberId = findFirstMemberId();
         Seat seat = findFirstSeat();
-        Long seatId = seat.getId();
+        Long seatId = seat.getId() + 1;
         String url = "http://localhost:" + port + "/api/reserve";
 
         ReserveSeatRequest request = new ReserveSeatRequest(seatId,memberId);

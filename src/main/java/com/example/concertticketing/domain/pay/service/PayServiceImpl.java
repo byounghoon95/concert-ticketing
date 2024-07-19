@@ -30,15 +30,9 @@ public class PayServiceImpl implements PayService {
     @Override
     public Pay pay(PayRequest request) {
         Reservation reservation = reservationService.findById(request.reservationId());
-        if (reservation.getMemberId() != request.memberId()) {
-            throw new CustomException(ErrorEnum.MEMBER_NOT_MATCH);
-        }
+        reservation.matchMember(reservation.getMemberId(), request.memberId());
 
-        Pay pay = Pay.builder()
-                .reservation(reservation)
-                .amount(reservation.getPrice())
-                .status(PayStatus.PAYED)
-                .build();
+        Pay pay = Pay.createPay(reservation);
 
         queueService.expiredToken(request.memberId(), QueueStatus.EXPIRED);
         seatService.updateReservedAt(request.seatId(), LocalDateTime.of(9999, 12, 31, 23, 59, 59));

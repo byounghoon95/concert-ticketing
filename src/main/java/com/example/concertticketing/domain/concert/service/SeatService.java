@@ -11,5 +11,5 @@ public interface SeatService {
 
     void updateReservedAt(Long seatId, LocalDateTime now);
 
-    void updateMember(Long seatId, Member member);
+    void reserveSeat(Long seatId, LocalDateTime now, Member member);
 }
