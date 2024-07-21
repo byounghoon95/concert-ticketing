@@ -19,9 +19,6 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * TestRestTemplate 사용 시 RANDOM_PORT 아니면 Bean 주입 안됨
- * */
 public class ConcertControllerIntegrateTest extends CommonControllerIntegrateTest {
     @AfterEach
     void tearDown() {
@@ -76,8 +73,8 @@ public class ConcertControllerIntegrateTest extends CommonControllerIntegrateTes
         ConcertDate concertDate = body.getData();
 
         // then
-        assertThat(body.getCode()).isEqualTo(ErrorEnum.TOKEN_EXPIRED.getCode());
-        assertThat(body.getMessage()).isEqualTo(ErrorEnum.TOKEN_EXPIRED.getMessage());
+        assertThat(body.getCode()).isEqualTo(ErrorEnum.TOKEN_INACTIVE.getCode());
+        assertThat(body.getMessage()).isEqualTo(ErrorEnum.TOKEN_INACTIVE.getMessage());
         assertThat(concertDate).isNull();
     }
 
@@ -125,8 +122,8 @@ public class ConcertControllerIntegrateTest extends CommonControllerIntegrateTes
         ConcertSeat concertDate = body.getData();
 
         // then
-        assertThat(body.getCode()).isEqualTo(ErrorEnum.TOKEN_EXPIRED.getCode());
-        assertThat(body.getMessage()).isEqualTo(ErrorEnum.TOKEN_EXPIRED.getMessage());
+        assertThat(body.getCode()).isEqualTo(ErrorEnum.TOKEN_INACTIVE.getCode());
+        assertThat(body.getMessage()).isEqualTo(ErrorEnum.TOKEN_INACTIVE.getMessage());
         assertThat(concertDate).isNull();
     }
 }

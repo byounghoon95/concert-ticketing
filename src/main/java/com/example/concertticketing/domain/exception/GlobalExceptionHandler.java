@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonResponse> handleException(Exception e) {
         log.error("Unknown Error Occurred : {}", e.getMessage());
@@ -21,5 +22,4 @@ public class GlobalExceptionHandler {
         log.error("Custom Error Occurred : {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(CommonResponse.error(e.getCode(),e.getMessage()));
     }
-
 }

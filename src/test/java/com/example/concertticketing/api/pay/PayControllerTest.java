@@ -48,7 +48,7 @@ class PayControllerTest extends CommonControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.amount").value(amount))
-                .andExpect(jsonPath("$.data.seat").value(seatNo))
+                .andExpect(jsonPath("$.data.seatNo").value(seatNo))
         ;
     }
 }
