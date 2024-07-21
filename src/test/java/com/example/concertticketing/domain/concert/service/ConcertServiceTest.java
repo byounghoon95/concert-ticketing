@@ -52,7 +52,7 @@ class ConcertServiceTest {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
         // when
-        when(concertRepository.findDatesByConcertId(any())).thenReturn(details);
+        when(concertRepository.findConcertDates(any())).thenReturn(details);
 
         ConcertDate concertDates = concertService.selectAvailableDates(concertId);
 
@@ -81,7 +81,7 @@ class ConcertServiceTest {
         }
 
         // when
-        when(concertRepository.findAvailableSeatsByConcertId(any(),any())).thenReturn(response);
+        when(concertRepository.findAvailableSeats(any(),any())).thenReturn(response);
 
         ConcertSeat concertSeats = concertService.selectAvailableSeats(concertDetailId);
 

@@ -3,6 +3,7 @@ package com.example.concertticketing.domain.reservation.service;
 import com.example.concertticketing.domain.concert.model.ConcertDetail;
 import com.example.concertticketing.domain.concert.model.Seat;
 import com.example.concertticketing.domain.concert.service.SeatServiceImpl;
+import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.reservation.model.Reservation;
 import com.example.concertticketing.domain.reservation.model.ReservationStatus;
 import com.example.concertticketing.domain.reservation.repository.ReservationRepository;
@@ -33,10 +34,15 @@ class ReservationServiceImplTest {
     void reserveSeat() {
         // given
         Long seatId = 1L;
+        Long memberId = 1L;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
         ConcertDetail concert = ConcertDetail.builder()
                 .name("A1")
                 .build();
         Seat seat = Seat.builder()
+                .member(member)
                 .concert(concert)
                 .build();
 
@@ -44,7 +50,7 @@ class ReservationServiceImplTest {
         when(seatService.selectSeat(any())).thenReturn(seat);
         when(reservationRepository.reserveSeat(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Reservation response = reservationService.reserveSeat(seatId);
+        Reservation response = reservationService.reserveSeat(seatId,memberId);
 
         // then
         assertThat(response.getStatus()).isEqualTo(ReservationStatus.RESERVED);

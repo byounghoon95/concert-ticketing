@@ -26,7 +26,7 @@ public class TokenVerificationInterceptor implements HandlerInterceptor {
         Long memberId = Long.valueOf(request.getHeader("memberId"));
         log.info("Member Verification Request : {}", memberId);
         if (!queueService.verify(memberId)) {
-            throw new CustomException(ErrorEnum.TOKEN_EXPIRED);
+            throw new CustomException(ErrorEnum.TOKEN_INACTIVE);
         }
 
         return true;

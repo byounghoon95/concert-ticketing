@@ -24,6 +24,11 @@ public class QueueRepositoryImpl implements QueueRepository {
     }
 
     @Override
+    public void saveAll(List<Queue> queue) {
+        queueJpaRepository.saveAll(queue);
+    }
+
+    @Override
     public Optional<Queue> findValidTokenByMemberId(Long memberId, QueueStatus status) {
         return queueJpaRepository.findByMemberIdAndStatusNot(memberId, status);
     }
@@ -51,5 +56,15 @@ public class QueueRepositoryImpl implements QueueRepository {
     @Override
     public Optional<Queue> findActiveTokenByMemberId(Long memberId, QueueStatus status) {
         return queueJpaRepository.findByMemberIdAndStatus(memberId, status);
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        queueJpaRepository.deleteAllInBatch();
+    }
+
+    @Override
+    public Optional<Queue> findById(Long id) {
+        return queueJpaRepository.findById(id);
     }
 }

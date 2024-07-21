@@ -1,6 +1,8 @@
 package com.example.concertticketing.domain.member.service;
 
 import com.example.concertticketing.api.member.dto.MemberChargeRequest;
+import com.example.concertticketing.domain.exception.CustomException;
+import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +24,23 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Member getBalance(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NullPointerException("멤버가 존재하지 않습니다"));
+                .orElseThrow(() -> new CustomException(ErrorEnum.MEMBER_NOT_FOUND));
     }
 
     @Transactional
     @Override
     public Member chargeBalance(MemberChargeRequest request) {
         Member member = memberRepository.findById(request.memberId())
-                .orElseThrow(() -> new NullPointerException("멤버가 존재하지 않습니다"));
+                .orElseThrow(() -> new CustomException(ErrorEnum.MEMBER_NOT_FOUND));
 
         member.chargeBalance(request.balance());
 
         return member;
+    }
+
+    @Override
+    public Member findById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorEnum.MEMBER_NOT_FOUND));
     }
 }

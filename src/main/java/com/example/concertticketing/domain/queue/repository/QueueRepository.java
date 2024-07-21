@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface QueueRepository {
     Queue save(Queue queue);
-
+    void saveAll(List<Queue> queue);
     Optional<Queue> findValidTokenByMemberId(Long memberId, QueueStatus status);
 
     void updateActiveTokenToExpired(LocalDateTime time);
@@ -24,4 +24,9 @@ public interface QueueRepository {
     List<Queue> findWaitMemberList(QueueStatus prev, PageRequest pageable);
 
     Optional<Queue> findActiveTokenByMemberId(Long memberId, QueueStatus status);
+
+    void deleteAllInBatch();
+
+    Optional<Queue> findById(Long id);
+
 }

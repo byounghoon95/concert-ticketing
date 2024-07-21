@@ -9,17 +9,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PayResponse {
     Long amount;
-    int seat;
+    int seatNo;
 
     @Builder
-    public PayResponse(Long amount, int seat) {
+    public PayResponse(Long amount, int seatNo) {
         this.amount = amount;
-        this.seat = seat;
+        this.seatNo = seatNo;
     }
 
     public static PayResponse of(Pay pay) {
         return PayResponse.builder()
-                .seat(pay.getReservation().getSeatNo())
+                .seatNo(pay.getReservation().getSeatNo())
                 .amount(pay.getAmount())
                 .build();
     }

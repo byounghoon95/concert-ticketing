@@ -36,4 +36,12 @@ public class Pay extends BaseEntity {
         this.amount = amount;
         this.status = status;
     }
+
+    public static Pay createPay(Reservation reservation) {
+        return Pay.builder()
+                .reservation(reservation)
+                .amount(reservation.getPrice())
+                .status(PayStatus.PAYED)
+                .build();
+    }
 }
