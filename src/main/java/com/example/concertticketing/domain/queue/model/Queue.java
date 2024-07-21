@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -63,5 +64,17 @@ public class Queue extends BaseEntity {
 
     public void updatePosition(Long position) {
         this.position = position;
+    }
+
+    public Long calculatePosition(List<Queue> queueList) {
+        return (queueList.size() > 0 && this.id - queueList.get(0).getId() > 0) ? this.id - queueList.get(0).getId() : 0;
+    }
+
+    public static Queue createWaitQueue(Member member) {
+        return Queue.builder()
+                .token(UUID.randomUUID())
+                .member(member)
+                .status(QueueStatus.WAIT)
+                .build();
     }
 }

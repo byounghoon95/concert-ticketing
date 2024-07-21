@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -33,17 +32,14 @@ public class QueueServiceImpl implements QueueService {
     public Queue enqueue(Long memberId) {
         Member member = memberService.getReferenceById(memberId);
         Queue myQueue = queueRepository.findValidTokenByMemberId(memberId, QueueStatus.EXPIRED)
-                .orElseGet(() -> queueRepository.save(createWaitQueue(member)));
+                .orElseGet(() -> queueRepository.save(Queue.createWaitQueue(member)));
 
         List<Queue> queueList = queueRepository.findFirstWaitMember(QueueStatus.WAIT,PageRequest.of(0, 1));
-        Long position = calculatePosition(queueList, myQueue);
+
+        Long position = myQueue.calculatePosition(queueList);
 
         myQueue.updatePosition(position);
         return myQueue;
-    }
-
-    private Long calculatePosition(List<Queue> queueList, Queue myQueue) {
-        return (queueList.size() > 0 && myQueue.getId() - queueList.get(0).getId() > 0) ? myQueue.getId() - queueList.get(0).getId() : 0;
     }
 
     /**
@@ -69,7 +65,7 @@ public class QueueServiceImpl implements QueueService {
         Queue myQueue = queueRepository.findActiveTokenByMemberId(memberId, QueueStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorEnum.TOKEN_EXPIRED));
 
-        Long position = calculatePosition(queueList, myQueue);
+        Long position = myQueue.calculatePosition(queueList);
         myQueue.updatePosition(position);
         return myQueue;
     }
@@ -89,7 +85,7 @@ public class QueueServiceImpl implements QueueService {
         queueRepository.findWaitMemberList(QueueStatus.WAIT, PageRequest.of(0, available - count)).stream()
                 .forEach(queue -> {
                     queue.updateStatus(QueueStatus.ACTIVE);
-                    queue.updateExpiredAt(now.plusMinutes(1));
+                    queue.updateExpiredAt(now.plusMinutes(5));
                 });
     }
 
@@ -99,13 +95,5 @@ public class QueueServiceImpl implements QueueService {
         Queue token = queueRepository.findActiveTokenByMemberId(memberId, QueueStatus.ACTIVE)
                 .orElseThrow(() -> new CustomException(ErrorEnum.TOKEN_EXPIRED));
         token.updateStatus(status);
-    }
-
-    private Queue createWaitQueue(Member member) {
-        return Queue.builder()
-                .token(UUID.randomUUID())
-                .member(member)
-                .status(QueueStatus.WAIT)
-                .build();
     }
 }

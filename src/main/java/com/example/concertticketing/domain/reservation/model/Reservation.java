@@ -2,6 +2,8 @@ package com.example.concertticketing.domain.reservation.model;
 
 import com.example.concertticketing.domain.common.entity.BaseEntity;
 import com.example.concertticketing.domain.concert.model.Seat;
+import com.example.concertticketing.domain.exception.CustomException;
+import com.example.concertticketing.domain.exception.ErrorEnum;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -54,4 +56,31 @@ public class Reservation extends BaseEntity {
         this.date = date;
         this.status = status;
     }
+
+    public static Reservation createReservation(Seat seat, Long memberId) {
+        return Reservation.builder()
+                .seat(seat)
+                .concertName(seat.getConcert().getName())
+                .price(seat.getPrice())
+                .seatNo(seat.getSeatNo())
+                .memberId(memberId)
+                .date(seat.getConcert().getDate())
+                .status(ReservationStatus.RESERVED)
+                .build();
+    }
+
+    public void matchMember(Long domainMemberId, Long requestMemberId) {
+        if (domainMemberId != requestMemberId) {
+            throw new CustomException(ErrorEnum.MEMBER_NOT_MATCH);
+        }
+    }
+
+    public static void checkTempReserved(LocalDateTime reservedAt) {
+        LocalDateTime now = LocalDateTime.now();
+        if (reservedAt != null && reservedAt.plusMinutes(5).isAfter(now)) {
+            throw new CustomException(ErrorEnum.RESERVED_SEAT);
+        }
+    }
+
+
 }
