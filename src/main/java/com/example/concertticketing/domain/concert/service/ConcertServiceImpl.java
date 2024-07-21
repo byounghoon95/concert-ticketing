@@ -5,6 +5,8 @@ import com.example.concertticketing.domain.concert.model.ConcertDateDetails;
 import com.example.concertticketing.domain.concert.model.ConcertSeat;
 import com.example.concertticketing.domain.concert.model.ConcertSeatDetail;
 import com.example.concertticketing.domain.concert.repository.ConcertRepository;
+import com.example.concertticketing.domain.exception.CustomException;
+import com.example.concertticketing.domain.exception.ErrorEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

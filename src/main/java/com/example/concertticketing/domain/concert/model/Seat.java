@@ -53,4 +53,8 @@ public class Seat extends BaseEntity {
     public void updateReservedAt(LocalDateTime reservedAt) {
         this.reservedAt = reservedAt;
     }
+
+    public void updateMember(Member member) {
+        this.member = member;
+    }
 }

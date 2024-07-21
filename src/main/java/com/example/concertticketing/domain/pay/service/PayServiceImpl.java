@@ -2,6 +2,8 @@ package com.example.concertticketing.domain.pay.service;
 
 import com.example.concertticketing.api.pay.dto.PayRequest;
 import com.example.concertticketing.domain.concert.service.SeatService;
+import com.example.concertticketing.domain.exception.CustomException;
+import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.example.concertticketing.domain.pay.model.Pay;
 import com.example.concertticketing.domain.pay.model.PayStatus;
 import com.example.concertticketing.domain.pay.repository.PayRepository;
@@ -29,7 +31,7 @@ public class PayServiceImpl implements PayService {
     public Pay pay(PayRequest request) {
         Reservation reservation = reservationService.findById(request.reservationId());
         if (reservation.getMemberId() != request.memberId()) {
-            throw new IllegalStateException("멤버 정보와 예약 정보가 일치하지 않습니다");
+            throw new CustomException(ErrorEnum.MEMBER_NOT_MATCH);
         }
 
         Pay pay = Pay.builder()

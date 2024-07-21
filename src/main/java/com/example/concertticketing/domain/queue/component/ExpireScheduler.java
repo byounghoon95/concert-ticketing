@@ -1,6 +1,5 @@
 package com.example.concertticketing.domain.queue.component;
 
-import com.example.concertticketing.domain.queue.model.QueueStatus;
 import com.example.concertticketing.domain.queue.service.QueueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,7 +17,7 @@ public class ExpireScheduler {
     /**
      * 활성화된 큐를 만료
      * */
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 60000)
     public void processExpiredQueues() {
         queueService.updateActiveTokenToExpired(LocalDateTime.now());
     }
@@ -26,8 +25,8 @@ public class ExpireScheduler {
     /**
      * 대기중인 큐를 활성화
      * */
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 60000)
     public void processActiveToken() {
-        queueService.updateWaitTokenToActive(LocalDateTime.now());
+        queueService.updateWaitTokenToActive(LocalDateTime.now(), 10);
     }
 }
