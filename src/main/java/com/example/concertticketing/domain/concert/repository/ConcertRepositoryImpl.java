@@ -21,12 +21,12 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     private final SeatJpaRepository seatJpaRepository;
 
     @Override
-    public List<ConcertDetail> findDatesByConcertId(Long concertId) {
+    public List<ConcertDetail> findConcertDates(Long concertId) {
         return concertDetailJpaRepository.findByConcertId(concertId);
     }
 
     @Override
-    public List<Seat> findAvailableSeatsByConcertId(Long concertDetailId, LocalDateTime time) {
+    public List<Seat> findAvailableSeats(Long concertDetailId, LocalDateTime time) {
         return seatJpaRepository.findByConcertIdAndReservedAtIsNullOrReservedAtBefore(concertDetailId, time);
     }
 

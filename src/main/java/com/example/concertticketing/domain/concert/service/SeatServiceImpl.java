@@ -30,8 +30,16 @@ public class SeatServiceImpl implements SeatService {
 
     @Transactional
     @Override
-    public void updateMember(Long seatId, Member member) {
+    public void reserveSeat(Long seatId, LocalDateTime now, Member member) {
         Seat seat = selectSeat(seatId);
+        seat.updateReservedAt(now);
         seat.updateMember(member);
     }
+
+//    @Transactional
+//    @Override
+//    public void updateMember(Long seatId, Member member) {
+//        Seat seat = selectSeat(seatId);
+//        seat.updateMember(member);
+//    }
 }
