@@ -34,4 +34,5 @@ https://github.com/users/byounghoon95/projects/7
 # Sequence Diagram
 ![sequence-diagram.jpg](src%2Fmain%2Fresources%2Fdocs%2Fsequence-diagram.jpg)
 
-# [API 명세](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/api-docs.md)
+# API 명세
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/api-docs.md)

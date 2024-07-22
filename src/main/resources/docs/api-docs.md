@@ -17,7 +17,7 @@
 - Method: POST
 - Params
    ``` json
-    QueueRequest {
+    {
         "memberId" : "String"
     }
     ```
@@ -119,7 +119,7 @@
 - Method: POST
 - Params
    ``` json
-    ReserveSeatRequest {
+    {
         "seatId" : "Long",
         "memberId" : "Long"
     }
@@ -170,7 +170,7 @@
 - Method: POST
 - Params
   ``` json
-  MemberChargeRequest {
+  {
       "memberId" : "Long",
       "balance" : "Long"
   }
@@ -193,7 +193,7 @@
 - Method: POST
 - Params
   ``` json
-  PayRequest {
+  {
       "memberId" : "Long",
       "seatId" : "Long",
       "reservationId" : "Long"
