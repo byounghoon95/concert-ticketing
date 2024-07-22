@@ -19,7 +19,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ReservationServiceImplTest {
+class ReservationServiceTest {
+
     @Mock
     private ReservationRepository reservationRepository;
 
@@ -47,10 +48,9 @@ class ReservationServiceImplTest {
                 .build();
 
         // when
-        when(seatService.selectSeat(any())).thenReturn(seat);
         when(reservationRepository.reserveSeat(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Reservation response = reservationService.reserveSeat(seatId,memberId);
+        Reservation response = reservationService.reserveSeat(seat,memberId);
 
         // then
         assertThat(response.getStatus()).isEqualTo(ReservationStatus.RESERVED);

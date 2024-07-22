@@ -12,4 +12,6 @@ public interface SeatService {
     void updateReservedAt(Long seatId, LocalDateTime now);
 
     void reserveSeat(Long seatId, LocalDateTime now, Member member);
+
+    Seat selectSeatWithLock(Long seatId);
 }

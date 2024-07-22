@@ -2,6 +2,8 @@ package com.example.concertticketing.domain.concert.service;
 
 import com.example.concertticketing.domain.concert.model.Seat;
 import com.example.concertticketing.domain.concert.repository.SeatRepository;
+import com.example.concertticketing.domain.exception.CustomException;
+import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.example.concertticketing.domain.member.model.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,13 @@ public class SeatServiceImpl implements SeatService {
     @Override
     public Seat selectSeat(Long seatId) {
         return seatRepository.findById(seatId)
-                .orElseThrow(() -> new NullPointerException("좌석 정보가 존재하지 않습니다"));
+                .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
+    }
+
+    @Override
+    public Seat selectSeatWithLock(Long seatId) {
+        return seatRepository.selectSeatWithLock(seatId)
+                .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
     }
 
     @Transactional
@@ -31,15 +39,9 @@ public class SeatServiceImpl implements SeatService {
     @Transactional
     @Override
     public void reserveSeat(Long seatId, LocalDateTime now, Member member) {
-        Seat seat = selectSeat(seatId);
+        Seat seat = selectSeatWithLock(seatId);
         seat.updateReservedAt(now);
         seat.updateMember(member);
     }
 
-//    @Transactional
-//    @Override
-//    public void updateMember(Long seatId, Member member) {
-//        Seat seat = selectSeat(seatId);
-//        seat.updateMember(member);
-//    }
 }

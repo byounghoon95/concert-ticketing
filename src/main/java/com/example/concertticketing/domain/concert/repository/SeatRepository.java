@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface SeatRepository {
     Optional<Seat> findById(Long seatId);
+    Optional<Seat> selectSeatWithLock(Long seatId);
     Seat save(Seat seat);
     void saveAll(List<Seat> seats);
-
     void deleteAllInBatch();
 }

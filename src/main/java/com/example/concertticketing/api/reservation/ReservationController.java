@@ -2,7 +2,7 @@ package com.example.concertticketing.api.reservation;
 
 import com.example.concertticketing.api.reservation.dto.ReserveSeatRequest;
 import com.example.concertticketing.api.reservation.dto.ReserveSeatResponse;
-import com.example.concertticketing.domain.reservation.service.ReservationService;
+import com.example.concertticketing.domain.reservation.application.ReservationFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/reserve")
 public class ReservationController {
 
-    private final ReservationService reservationService;
+    private final ReservationFacade reservationFacade;
 
     /**
      * 좌석 예약
      * */
     @PostMapping("")
     public ResponseEntity<ReserveSeatResponse> reserveSeat(@RequestBody ReserveSeatRequest request) {
-        return ResponseEntity.ok(ReserveSeatResponse.of(reservationService.reserveSeat(request.seatId(), request.memberId())));
+        return ResponseEntity.ok(ReserveSeatResponse.of(reservationFacade.reserveSeat(request.seatId(), request.memberId())));
     }
 }

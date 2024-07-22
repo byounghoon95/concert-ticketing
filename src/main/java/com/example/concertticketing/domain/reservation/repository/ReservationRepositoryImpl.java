@@ -5,6 +5,8 @@ import com.example.concertticketing.domain.reservation.model.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Repository
 public class ReservationRepositoryImpl implements ReservationRepository {
@@ -25,6 +27,11 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     @Override
     public Reservation save(Reservation reservation) {
         return reservationJpaRepository.save(reservation);
+    }
+
+    @Override
+    public List<Reservation> findAll() {
+        return reservationJpaRepository.findAll();
     }
 
     @Override
