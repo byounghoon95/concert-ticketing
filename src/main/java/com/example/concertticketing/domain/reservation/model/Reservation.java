@@ -75,6 +75,12 @@ public class Reservation extends BaseEntity {
         }
     }
 
+    public void isAvailable() {
+        if (this.createdAt.isBefore(LocalDateTime.now().minusMinutes(5))) {
+            throw new CustomException(ErrorEnum.NO_RESERVATION);
+        }
+    }
+
     public static void checkTempReserved(LocalDateTime reservedAt) {
         LocalDateTime now = LocalDateTime.now();
         if (reservedAt != null && reservedAt.plusMinutes(5).isAfter(now)) {

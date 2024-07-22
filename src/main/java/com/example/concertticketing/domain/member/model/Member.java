@@ -1,6 +1,8 @@
 package com.example.concertticketing.domain.member.model;
 
 import com.example.concertticketing.domain.common.entity.BaseEntity;
+import com.example.concertticketing.domain.exception.CustomException;
+import com.example.concertticketing.domain.exception.ErrorEnum;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -36,4 +38,12 @@ public class Member extends BaseEntity {
     public void chargeBalance(Long amount) {
         this.balance += amount;
     }
+
+    public void minusBalance(Long amount) {
+        if (this.balance < amount) {
+            throw new CustomException(ErrorEnum.NOT_ENOUGH_BALANCE);
+        }
+        this.balance -= amount;
+    }
+
 }

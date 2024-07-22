@@ -4,6 +4,8 @@ import com.example.concertticketing.api.pay.dto.PayRequest;
 import com.example.concertticketing.domain.concert.service.SeatService;
 import com.example.concertticketing.domain.exception.CustomException;
 import com.example.concertticketing.domain.exception.ErrorEnum;
+import com.example.concertticketing.domain.member.model.Member;
+import com.example.concertticketing.domain.member.service.MemberService;
 import com.example.concertticketing.domain.pay.model.Pay;
 import com.example.concertticketing.domain.pay.model.PayStatus;
 import com.example.concertticketing.domain.pay.repository.PayRepository;
@@ -25,15 +27,18 @@ public class PayServiceImpl implements PayService {
     private final ReservationService reservationService;
     private final QueueService queueService;
     private final SeatService seatService;
+    private final MemberService memberService;
 
     @Transactional
     @Override
     public Pay pay(PayRequest request) {
         Reservation reservation = reservationService.findById(request.reservationId());
         reservation.matchMember(reservation.getMemberId(), request.memberId());
+        reservation.isAvailable();
 
         Pay pay = Pay.createPay(reservation);
 
+        memberService.minusBalance(request.memberId(), reservation.getPrice());
         queueService.expiredToken(request.memberId(), QueueStatus.EXPIRED);
         seatService.updateReservedAt(request.seatId(), LocalDateTime.of(9999, 12, 31, 23, 59, 59));
 
