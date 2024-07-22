@@ -24,25 +24,21 @@ public class ReservationFacade {
 
     @Transactional
     public Reservation reserveSeat(Long seatId, Long memberId) {
-        try {
-            Seat seat = seatService.selectSeatWithLock(seatId);
+        Seat seat = seatService.selectSeatWithLock(seatId);
 
-            // 5분동안 임시저장
-            LocalDateTime reservedAt = seat.getReservedAt();
-            Reservation.checkTempReserved(reservedAt);
+        // 5분동안 임시저장
+        LocalDateTime reservedAt = seat.getReservedAt();
+        Reservation.checkTempReserved(reservedAt);
 
-            Member member = seat.getMember();
-            if (seat.getMember() != null) {
-                memberId = seat.getMember().getId();
-            } else {
-                member = memberService.findById(memberId);
-            }
-
-            seatService.reserveSeat(seatId, LocalDateTime.now(), member);
-            return reservationService.reserveSeat(seat, memberId);
-        } catch (OptimisticLockingFailureException e) {
-            throw new CustomException(ErrorEnum.RESERVED_SEAT);
+        Member member = seat.getMember();
+        if (seat.getMember() != null) {
+            memberId = seat.getMember().getId();
+        } else {
+            member = memberService.findById(memberId);
         }
+
+        seatService.reserveSeat(seat, LocalDateTime.now(), member);
+        return reservationService.reserveSeat(seat, memberId);
     }
 
     public Reservation findById(Long reservationId) {

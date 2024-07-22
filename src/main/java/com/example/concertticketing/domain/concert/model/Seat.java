@@ -40,10 +40,6 @@ public class Seat extends BaseEntity {
     @Column(name = "RESERVED_AT")
     private LocalDateTime reservedAt;
 
-    @Version
-    @Column(name = "VERSION")
-    private Long version;
-
     @Builder
     public Seat(Long id, Member member, ConcertDetail concert, int seatNo, Long price, LocalDateTime reservedAt) {
         this.id = id;
