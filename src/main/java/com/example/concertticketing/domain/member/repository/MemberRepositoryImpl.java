@@ -38,4 +38,9 @@ public class MemberRepositoryImpl implements MemberRepository {
     public void deleteAllInBatch() {
         memberJpaRepository.deleteAllInBatch();
     }
+
+    @Override
+    public List<Member> findAll() {
+        return memberJpaRepository.findAll();
+    }
 }
