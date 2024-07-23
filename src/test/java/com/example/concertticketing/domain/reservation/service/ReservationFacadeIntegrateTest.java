@@ -65,6 +65,7 @@ public class ReservationFacadeIntegrateTest {
         memberRepository.deleteAllInBatch();
         concertRepository.deleteAllInBatch();
         seatRepository.deleteAllInBatch();
+        reservationRepository.deleteAllInBatch();
     }
 
     private Member createMember(String loginId, Long balance) {

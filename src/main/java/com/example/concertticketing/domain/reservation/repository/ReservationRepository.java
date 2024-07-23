@@ -11,4 +11,5 @@ public interface ReservationRepository {
     Reservation save(Reservation reservation);
     List<Reservation> findAll();
     void deleteAllInBatch();
+    void saveAll(List<Reservation> reservationList);
 }

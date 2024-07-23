@@ -47,7 +47,7 @@ public class Reservation extends BaseEntity {
     private ReservationStatus status;
 
     @Builder
-    public Reservation(Seat seat, String concertName, Long price, int seatNo, Long memberId, LocalDateTime date, ReservationStatus status) {
+    public Reservation(Seat seat, String concertName, Long price, int seatNo, Long memberId, LocalDateTime date, ReservationStatus status, LocalDateTime createdAt) {
         this.seat = seat;
         this.concertName = concertName;
         this.price = price;
@@ -55,6 +55,7 @@ public class Reservation extends BaseEntity {
         this.memberId = memberId;
         this.date = date;
         this.status = status;
+        this.createdAt = createdAt;
     }
 
     public static Reservation createReservation(Seat seat, Long memberId) {
@@ -88,5 +89,9 @@ public class Reservation extends BaseEntity {
         }
     }
 
-
+    public static void checkMember(Long memberId, Long seatMemberId) {
+        if (memberId != seatMemberId) {
+            throw new CustomException(ErrorEnum.MEMBER_NOT_MATCH);
+        }
+    }
 }

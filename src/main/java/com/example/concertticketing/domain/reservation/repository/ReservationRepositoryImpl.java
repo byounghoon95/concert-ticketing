@@ -38,4 +38,9 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     public void deleteAllInBatch() {
         reservationJpaRepository.deleteAllInBatch();
     }
+
+    @Override
+    public void saveAll(List<Reservation> reservationList) {
+        reservationJpaRepository.saveAll(reservationList);
+    }
 }

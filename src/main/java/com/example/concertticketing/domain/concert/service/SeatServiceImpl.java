@@ -5,6 +5,7 @@ import com.example.concertticketing.domain.concert.repository.SeatRepository;
 import com.example.concertticketing.domain.exception.CustomException;
 import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.example.concertticketing.domain.member.model.Member;
+import com.example.concertticketing.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Service
 public class SeatServiceImpl implements SeatService {
     private final SeatRepository seatRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public Seat selectSeat(Long seatId) {
@@ -37,7 +39,9 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public void reserveSeat(Seat seat, LocalDateTime now, Member member) {
+    public void reserveSeat(Seat seat, LocalDateTime now, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorEnum.MEMBER_NOT_FOUND));
         seat.updateReservedAt(now);
         seat.updateMember(member);
     }
