@@ -2,6 +2,7 @@ package com.example.concertticketing.domain.pay;
 
 import com.example.concertticketing.api.pay.dto.PayRequest;
 import com.example.concertticketing.domain.concert.service.SeatServiceImpl;
+import com.example.concertticketing.domain.member.service.MemberServiceImpl;
 import com.example.concertticketing.domain.pay.model.Pay;
 import com.example.concertticketing.domain.pay.model.PayStatus;
 import com.example.concertticketing.domain.pay.repository.PayRepository;
@@ -15,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,6 +37,9 @@ class PayServiceTest {
     @Mock
     private SeatServiceImpl seatService;
 
+    @Mock
+    private MemberServiceImpl memberService;
+
     @InjectMocks
     private PayServiceImpl payService;
 
@@ -45,12 +51,14 @@ class PayServiceTest {
         Long memberId = 1L;
         Long seatId = 1L;
         Long price = 5000L;
+        Long amount = 2000L;
 
         PayRequest request = new PayRequest(reservationId,memberId,seatId);
 
         Reservation reservation = Reservation.builder()
                 .memberId(memberId)
                 .price(price)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         // when

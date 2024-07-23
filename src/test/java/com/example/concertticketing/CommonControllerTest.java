@@ -9,7 +9,7 @@ import com.example.concertticketing.domain.concert.service.ConcertServiceImpl;
 import com.example.concertticketing.domain.member.service.MemberServiceImpl;
 import com.example.concertticketing.domain.pay.service.PayServiceImpl;
 import com.example.concertticketing.domain.queue.service.QueueServiceImpl;
-import com.example.concertticketing.domain.reservation.service.ReservationServiceImpl;
+import com.example.concertticketing.domain.reservation.application.ReservationFacade;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,7 +40,7 @@ public abstract class CommonControllerTest {
     protected ConcertServiceImpl concertService;
 
     @MockBean
-    protected ReservationServiceImpl reservationService;
+    protected ReservationFacade reservationFacade;
 
     @MockBean
     protected PayServiceImpl payService;

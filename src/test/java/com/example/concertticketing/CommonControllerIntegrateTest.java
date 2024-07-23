@@ -220,12 +220,16 @@ public abstract class CommonControllerIntegrateTest {
         ConcertDetail concertDetail = findFirstConcertDetail();
         List<Seat> seatList = List.of(
                 createSeat(concertDetail, null, 1, 4000L, null),
-                createSeat(concertDetail, null, 2, 5000L, LocalDateTime.now().plusMinutes(6))
+                createSeat(concertDetail, member, 2, 4000L, LocalDateTime.now().plusMinutes(6)),
+                createSeat(concertDetail, member, 3, 6000L, LocalDateTime.now().plusMinutes(6))
         );
         seatRepository.saveAll(seatList);
 
-        Reservation reservation = createReservation(member, seatList.get(1), 5000L);
-        reservationRepository.save(reservation);
+        List<Reservation> reservationList = List.of(
+                createReservation(member, seatList.get(1), 4000L),
+                createReservation(member, seatList.get(2), 6000L)
+        );
+        reservationRepository.saveAll(reservationList);
     }
 
     protected Long findFirstMemberId() {

@@ -6,6 +6,7 @@ import com.example.concertticketing.api.pay.dto.PayRequest;
 import com.example.concertticketing.api.pay.dto.PayResponse;
 import com.example.concertticketing.domain.concert.model.Seat;
 import com.example.concertticketing.domain.exception.ErrorEnum;
+import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.queue.model.Queue;
 import com.example.concertticketing.domain.queue.model.QueueStatus;
 import org.junit.jupiter.api.AfterEach;
@@ -51,6 +52,7 @@ public class PayControllerIntegrateTest extends CommonControllerIntegrateTest {
         CommonResponse<PayResponse> body = response.getBody();
         PayResponse data = body.getData();
 
+        Member savedMember = memberRepository.findById(memberId).get();
         Seat savedSeat = seatRepository.findById(seatId).get();
         Queue savedQueue = queueRepository.findById(queueId).get();
 
@@ -58,9 +60,10 @@ public class PayControllerIntegrateTest extends CommonControllerIntegrateTest {
         assertThat(body.getCode()).isEqualTo(ErrorEnum.SUCCESS.getCode());
         assertThat(body.getMessage()).isEqualTo(ErrorEnum.SUCCESS.getMessage());
         assertThat(data.getSeatNo()).isEqualTo(savedSeat.getSeatNo());
-        assertThat(data.getAmount()).isEqualTo(5000L);
+        assertThat(data.getAmount()).isEqualTo(4000L);
         assertThat(savedSeat.getReservedAt()).isEqualTo(LocalDateTime.of(9999, 12, 31, 23, 59, 59));
         assertThat(savedQueue.getStatus()).isEqualTo(QueueStatus.EXPIRED);
+        assertThat(savedMember.getBalance()).isEqualTo(1000L);
     }
 
     @DisplayName("예약건 결제에서 요청의 멤버 아이디와 예약의 멤버 아이다가 달라 에러를 반환한다")
@@ -84,5 +87,28 @@ public class PayControllerIntegrateTest extends CommonControllerIntegrateTest {
         // then
         assertThat(body.getCode()).isEqualTo(ErrorEnum.MEMBER_NOT_MATCH.getCode());
         assertThat(body.getMessage()).isEqualTo(ErrorEnum.MEMBER_NOT_MATCH.getMessage());
+    }
+
+    @DisplayName("잔액이 부족해 에러를 반환한다")
+    @Test
+    void pay_member_not_enough_balance() {
+        // given
+        setUpPay();
+        Long memberId = findFirstMemberId();
+        Seat seat = findFirstSeat();
+        Long seatId = seat.getId() + 2L;
+        Long reservationId = findFirstReservationId() + 1L;
+        String url = "http://localhost:" + port + "/api/pay";
+
+        PayRequest request = new PayRequest(reservationId,seatId,memberId);
+
+        // when
+        HttpEntity<PayRequest> header = setHeader(memberId, request);
+        ResponseEntity<CommonResponse<PayResponse>> response = restTemplate.exchange(url, HttpMethod.POST, header, new ParameterizedTypeReference<>() {});
+        CommonResponse<PayResponse> body = response.getBody();
+
+        // then
+        assertThat(body.getCode()).isEqualTo(ErrorEnum.NOT_ENOUGH_BALANCE.getCode());
+        assertThat(body.getMessage()).isEqualTo(ErrorEnum.NOT_ENOUGH_BALANCE.getMessage());
     }
 }
