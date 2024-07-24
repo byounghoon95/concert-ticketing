@@ -25,6 +25,7 @@ public class SeatServiceImpl implements SeatService {
                 .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
     }
 
+    @Transactional
     @Override
     public Seat selectSeatWithLock(Long seatId) {
         return seatRepository.selectSeatWithLock(seatId)

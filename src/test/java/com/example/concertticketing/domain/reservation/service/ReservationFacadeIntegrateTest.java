@@ -59,7 +59,6 @@ public class ReservationFacadeIntegrateTest {
     @Autowired
     private EntityManager entityManager;
 
-    @AfterEach
     void tearDown() {
         queueRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
