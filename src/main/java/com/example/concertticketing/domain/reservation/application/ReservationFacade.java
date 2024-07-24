@@ -2,11 +2,15 @@ package com.example.concertticketing.domain.reservation.application;
 
 import com.example.concertticketing.domain.concert.model.Seat;
 import com.example.concertticketing.domain.concert.service.SeatService;
+import com.example.concertticketing.domain.exception.CustomException;
+import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.example.concertticketing.domain.reservation.model.Reservation;
 import com.example.concertticketing.domain.reservation.service.ReservationService;
+import com.example.concertticketing.domain.util.LettuceLock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 
@@ -15,23 +19,30 @@ import java.time.LocalDateTime;
 public class ReservationFacade {
     private final SeatService seatService;
     private final ReservationService reservationService;
+    private final LettuceLock lettuceLock;
 
-    @Transactional
     public Reservation reserveSeat(Long seatId, Long memberId) {
-        Seat seat = seatService.selectSeatWithLock(seatId);
+        try {
+            Boolean lock = lettuceLock.lock(seatId);
+            if (!lock) {
+                throw new CustomException(ErrorEnum.RESERVED_SEAT);
+            }
 
-        // 5분동안 임시저장
-        LocalDateTime reservedAt = seat.getReservedAt();
-        Reservation.checkTempReserved(reservedAt);
+            Seat seat = seatService.selectSeat(seatId);
 
-        if (seat.getMember() != null) {
-            Reservation.checkMember(memberId, seat.getMember().getId());
+            // 5분동안 임시저장
+            LocalDateTime reservedAt = seat.getReservedAt();
+            Reservation.checkTempReserved(reservedAt);
+
+            if (seat.getMember() != null) {
+                Reservation.checkMember(memberId, seat.getMember().getId());
+            }
+
+            seatService.reserveSeat(seatId, LocalDateTime.now(), memberId);
+        } finally {
+            lettuceLock.unlock(seatId);
         }
-
-        seatService.reserveSeat(seat, LocalDateTime.now(), memberId);
-
-        Reservation reservation = reservationService.reserveSeat(seat, memberId);
-        return reservation;
+        return reservationService.reserveSeat(seatId, memberId);
     }
 
     public Reservation findById(Long reservationId) {

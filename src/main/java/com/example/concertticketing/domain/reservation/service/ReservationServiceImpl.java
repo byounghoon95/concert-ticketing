@@ -1,6 +1,7 @@
 package com.example.concertticketing.domain.reservation.service;
 
 import com.example.concertticketing.domain.concert.model.Seat;
+import com.example.concertticketing.domain.concert.repository.SeatRepository;
 import com.example.concertticketing.domain.reservation.model.Reservation;
 import com.example.concertticketing.domain.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final SeatRepository seatRepository;
 
+    @Transactional
     @Override
-    public Reservation reserveSeat(Seat seat, Long memberId) {
+    public Reservation reserveSeat(Long seatId, Long memberId) {
+        Seat seat = seatRepository.findById(seatId).get();
         Reservation reservation = Reservation.createReservation(seat, memberId);
         return reservationRepository.reserveSeat(reservation);
     }

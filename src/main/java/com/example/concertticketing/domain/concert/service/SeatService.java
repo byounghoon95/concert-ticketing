@@ -10,7 +10,7 @@ public interface SeatService {
 
     void updateReservedAt(Long seatId, LocalDateTime now);
 
-    void reserveSeat(Seat seat, LocalDateTime now, Long memberId);
+    void reserveSeat(Long seatId, LocalDateTime now, Long memberId);
 
     Seat selectSeatWithLock(Long seatId);
 }

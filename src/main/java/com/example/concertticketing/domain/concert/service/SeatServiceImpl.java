@@ -38,10 +38,14 @@ public class SeatServiceImpl implements SeatService {
         seat.updateReservedAt(now);
     }
 
+    @Transactional
     @Override
-    public void reserveSeat(Seat seat, LocalDateTime now, Long memberId) {
+    public void reserveSeat(Long seatId, LocalDateTime now, Long memberId) {
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorEnum.MEMBER_NOT_FOUND));
+
         seat.updateReservedAt(now);
         seat.updateMember(member);
     }
