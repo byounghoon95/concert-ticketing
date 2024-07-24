@@ -88,10 +88,4 @@ public class Reservation extends BaseEntity {
             throw new CustomException(ErrorEnum.RESERVED_SEAT);
         }
     }
-
-    public static void checkMember(Long memberId, Long seatMemberId) {
-        if (memberId != seatMemberId) {
-            throw new CustomException(ErrorEnum.MEMBER_NOT_MATCH);
-        }
-    }
 }

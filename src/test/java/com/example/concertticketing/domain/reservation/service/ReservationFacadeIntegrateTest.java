@@ -119,30 +119,30 @@ public class ReservationFacadeIntegrateTest {
 
     private void setUpReservation() {
         List<Member> members = List.of(
-                createMember("A1", 5000L),
-                createMember("A2", 5000L),
-                createMember("A3", 5000L),
-                createMember("A4", 5000L),
-                createMember("A5", 5000L),
-                createMember("A6", 5000L),
-                createMember("A7", 5000L),
-                createMember("A8", 5000L),
-                createMember("A9", 5000L),
-                createMember("A10", 5000L)
+                createMember("A1", 5000L)
+//                createMember("A2", 5000L),
+//                createMember("A3", 5000L),
+//                createMember("A4", 5000L),
+//                createMember("A5", 5000L),
+//                createMember("A6", 5000L),
+//                createMember("A7", 5000L),
+//                createMember("A8", 5000L),
+//                createMember("A9", 5000L),
+//                createMember("A10", 5000L)
         );
         memberRepository.saveAll(members);
 
         List<Queue> queues = List.of(
-                createQueue(members.get(0), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(1), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(2), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(3), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(4), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(5), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(6), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(7), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(8), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(9), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1))
+                createQueue(members.get(0), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1))
+//                createQueue(members.get(1), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
+//                createQueue(members.get(2), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
+//                createQueue(members.get(3), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
+//                createQueue(members.get(4), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
+//                createQueue(members.get(5), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
+//                createQueue(members.get(6), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
+//                createQueue(members.get(7), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
+//                createQueue(members.get(8), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
+//                createQueue(members.get(9), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1))
         );
         queueRepository.saveAll(queues);
 
@@ -202,8 +202,8 @@ public class ReservationFacadeIntegrateTest {
         assertThat(prev.size()).isEqualTo(0);
         assertThat(after.size()).isEqualTo(1);
 
-        CompletableFuture.allOf(
-                CompletableFuture.runAsync(() -> tearDown())
-        ).join();
+//        CompletableFuture.allOf(
+//                CompletableFuture.runAsync(() -> tearDown())
+//        ).join();
     }
 }

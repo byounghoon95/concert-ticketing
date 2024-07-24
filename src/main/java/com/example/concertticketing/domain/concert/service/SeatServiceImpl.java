@@ -6,6 +6,7 @@ import com.example.concertticketing.domain.exception.CustomException;
 import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.member.repository.MemberRepository;
+import com.example.concertticketing.domain.reservation.model.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,18 @@ public class SeatServiceImpl implements SeatService {
 
     @Transactional
     @Override
+    public void checkAvailableSeat(Long seatId, Long memberId) {
+        Seat seat = selectSeatWithLock(seatId);
+
+        // 5분동안 임시저장
+        LocalDateTime reservedAt = seat.getReservedAt();
+        Reservation.checkTempReserved(reservedAt);
+
+        reserveSeat(seatId, LocalDateTime.now(), memberId);
+    }
+
+    @Transactional
+    @Override
     public void updateReservedAt(Long seatId, LocalDateTime now) {
         Seat seat = selectSeat(seatId);
         seat.updateReservedAt(now);
@@ -46,7 +59,6 @@ public class SeatServiceImpl implements SeatService {
                 .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorEnum.MEMBER_NOT_FOUND));
-
         seat.updateReservedAt(now);
         seat.updateMember(member);
     }
