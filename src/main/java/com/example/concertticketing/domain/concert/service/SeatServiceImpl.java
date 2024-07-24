@@ -35,18 +35,6 @@ public class SeatServiceImpl implements SeatService {
 
     @Transactional
     @Override
-    public void checkAvailableSeat(Long seatId, Long memberId) {
-        Seat seat = selectSeatWithLock(seatId);
-
-        // 5분동안 임시저장
-        LocalDateTime reservedAt = seat.getReservedAt();
-        Reservation.checkTempReserved(reservedAt);
-
-        reserveSeat(seatId, LocalDateTime.now(), memberId);
-    }
-
-    @Transactional
-    @Override
     public void updateReservedAt(Long seatId, LocalDateTime now) {
         Seat seat = selectSeat(seatId);
         seat.updateReservedAt(now);

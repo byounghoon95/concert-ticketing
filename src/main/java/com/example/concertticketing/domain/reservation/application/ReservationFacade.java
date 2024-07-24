@@ -18,9 +18,15 @@ public class ReservationFacade {
     private final ReservationService reservationService;
 
     public Reservation reserveSeat(Long seatId, Long memberId) {
-        seatService.checkAvailableSeat(seatId, memberId);
-        Reservation reservation = reservationService.reserveSeat(seatId, memberId);
-        return reservation;
+        Seat seat = seatService.selectSeatWithLock(seatId);
+
+        // 5분동안 임시저장
+        LocalDateTime reservedAt = seat.getReservedAt();
+        Reservation.checkTempReserved(reservedAt);
+
+        seatService.reserveSeat(seatId, LocalDateTime.now(), memberId);
+
+        return reservationService.reserveSeat(seatId, memberId);
     }
 
     public Reservation findById(Long reservationId) {

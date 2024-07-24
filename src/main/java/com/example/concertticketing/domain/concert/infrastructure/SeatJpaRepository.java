@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface SeatJpaRepository extends JpaRepository<Seat,Long> {
     List<Seat> findByConcertIdAndReservedAtIsNullOrReservedAtBefore(@Param("concertId") Long concertDetailId, @Param("time") LocalDateTime time);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
     @Query("SELECT s FROM Seat s WHERE s.id = :seatId")
     Optional<Seat> selectSeatWithLock(@Param("seatId") Long seatId);
 }
