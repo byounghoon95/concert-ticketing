@@ -28,6 +28,10 @@ public class Member extends BaseEntity {
     @Column(name = "BALANCE")
     private Long balance;
 
+    @Version
+    @Column(name = "VERSION")
+    private Long version;
+
     @Builder
     public Member(Long id, String memberLoginId, Long balance) {
         this.id = id;
