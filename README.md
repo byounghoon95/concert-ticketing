@@ -36,3 +36,6 @@ https://github.com/users/byounghoon95/projects/7
 
 # API 명세
 ### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/api-docs.md)
+
+# 락 고찰
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/lock.md)
