@@ -21,6 +21,8 @@ public class ReservationControllerIntegrateTest extends CommonControllerIntegrat
     void tearDown() {
         queueRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
+        concertRepository.deleteAllInBatch();
+        seatRepository.deleteAllInBatch();
     }
 
     @DisplayName("좌석을 예약한다")

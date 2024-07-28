@@ -2,6 +2,7 @@ package com.example.concertticketing.domain.reservation.service;
 
 import com.example.concertticketing.domain.concert.model.ConcertDetail;
 import com.example.concertticketing.domain.concert.model.Seat;
+import com.example.concertticketing.domain.concert.repository.SeatRepository;
 import com.example.concertticketing.domain.concert.service.SeatServiceImpl;
 import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.reservation.model.Reservation;
@@ -14,17 +15,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ReservationServiceImplTest {
+class ReservationServiceTest {
+
     @Mock
     private ReservationRepository reservationRepository;
 
     @Mock
-    private SeatServiceImpl seatService;
+    private SeatRepository seatRepository;
 
     @InjectMocks
     private ReservationServiceImpl reservationService;
@@ -47,7 +51,7 @@ class ReservationServiceImplTest {
                 .build();
 
         // when
-        when(seatService.selectSeat(any())).thenReturn(seat);
+        when(seatRepository.findById(any())).thenReturn(Optional.of(seat));
         when(reservationRepository.reserveSeat(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Reservation response = reservationService.reserveSeat(seatId,memberId);

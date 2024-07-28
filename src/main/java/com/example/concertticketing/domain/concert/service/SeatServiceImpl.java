@@ -2,7 +2,11 @@ package com.example.concertticketing.domain.concert.service;
 
 import com.example.concertticketing.domain.concert.model.Seat;
 import com.example.concertticketing.domain.concert.repository.SeatRepository;
+import com.example.concertticketing.domain.exception.CustomException;
+import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.example.concertticketing.domain.member.model.Member;
+import com.example.concertticketing.domain.member.repository.MemberRepository;
+import com.example.concertticketing.domain.reservation.model.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,11 +18,19 @@ import java.time.LocalDateTime;
 @Service
 public class SeatServiceImpl implements SeatService {
     private final SeatRepository seatRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public Seat selectSeat(Long seatId) {
         return seatRepository.findById(seatId)
-                .orElseThrow(() -> new NullPointerException("좌석 정보가 존재하지 않습니다"));
+                .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
+    }
+
+    @Transactional
+    @Override
+    public Seat selectSeatWithLock(Long seatId) {
+        return seatRepository.selectSeatWithLock(seatId)
+                .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
     }
 
     @Transactional
@@ -30,16 +42,12 @@ public class SeatServiceImpl implements SeatService {
 
     @Transactional
     @Override
-    public void reserveSeat(Long seatId, LocalDateTime now, Member member) {
-        Seat seat = selectSeat(seatId);
+    public void reserveSeat(Long seatId, LocalDateTime now, Long memberId) {
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorEnum.MEMBER_NOT_FOUND));
         seat.updateReservedAt(now);
         seat.updateMember(member);
     }
-
-//    @Transactional
-//    @Override
-//    public void updateMember(Long seatId, Member member) {
-//        Seat seat = selectSeat(seatId);
-//        seat.updateMember(member);
-//    }
 }

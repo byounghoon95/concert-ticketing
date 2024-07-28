@@ -20,6 +20,11 @@ public class SeatRepositoryImpl implements SeatRepository {
     }
 
     @Override
+    public Optional<Seat> selectSeatWithLock(Long seatId) {
+        return seatJpaRepository.selectSeatWithLock(seatId);
+    }
+
+    @Override
     public Seat save(Seat seat) {
         return seatJpaRepository.save(seat);
     }

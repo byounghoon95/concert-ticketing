@@ -11,6 +11,10 @@ spring:
     properties:
       hibernate:
         use_sql_comments: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 logging:
   level:
@@ -18,5 +22,6 @@ logging:
       hibernate:
         orm:
           jdbc:
-            bind: TRACE
+            bind: info
+
 
