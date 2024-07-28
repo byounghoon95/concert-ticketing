@@ -30,7 +30,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public Member chargeBalance(MemberChargeRequest request) {
-        Member member = memberRepository.findById(request.memberId())
+        Member member = memberRepository.selectMemberWithLock(request.memberId())
                 .orElseThrow(() -> new CustomException(ErrorEnum.MEMBER_NOT_FOUND));
 
         member.chargeBalance(request.balance());

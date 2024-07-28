@@ -43,4 +43,9 @@ public class MemberRepositoryImpl implements MemberRepository {
     public List<Member> findAll() {
         return memberJpaRepository.findAll();
     }
+
+    @Override
+    public Optional<Member> selectMemberWithLock(Long memberId) {
+        return memberJpaRepository.selectMemberWithLock(memberId);
+    }
 }

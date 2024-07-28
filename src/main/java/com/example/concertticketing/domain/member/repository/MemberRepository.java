@@ -13,4 +13,5 @@ public interface MemberRepository {
     void saveAll(List<Member> member);
     void deleteAllInBatch();
     List<Member> findAll();
+    Optional<Member> selectMemberWithLock(Long memberId);
 }
