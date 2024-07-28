@@ -34,7 +34,7 @@ class ReservationControllerTest extends CommonControllerTest {
 
         // when
         when(queueService.verify(memberId)).thenReturn(true);
-        when(reservationService.reserveSeat(any(),any())).thenReturn(reservation);
+        when(reservationFacade.reserveSeat(any(),any())).thenReturn(reservation);
 
         // then
         mockMvc.perform(post("/api/reserve")
