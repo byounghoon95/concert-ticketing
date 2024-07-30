@@ -22,6 +22,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -31,6 +32,7 @@ import java.util.Set;
 /**
  * TestRestTemplate 사용 시 RANDOM_PORT 아니면 Bean 주입 안됨
  * */
+@ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class CommonControllerIntegrateTest {
     @LocalServerPort

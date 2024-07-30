@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -22,7 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * + 2L ~ 5L : 활성 토큰 조회
  * + 6L ~ 8L : 대기 토큰 조회
  * */
-@SpringBootTest
+@ActiveProfiles("test")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class QueueServiceIntegrateTest {
     @Autowired
     private QueueRepository queueRepository;
