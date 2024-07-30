@@ -1,7 +1,6 @@
 package com.example.concertticketing.domain.queue.service;
 
 import com.example.concertticketing.domain.queue.model.Queue;
-import com.example.concertticketing.domain.queue.model.QueueStatus;
 
 import java.time.LocalDateTime;
 
@@ -11,5 +10,4 @@ public interface QueueService {
     void updateActiveTokenToExpired(LocalDateTime time);
     Queue getInfo(Long memberId);
     void updateWaitTokenToActive(LocalDateTime time, int available);
-    void expiredToken(Long aLong, QueueStatus queueStatus);
 }
