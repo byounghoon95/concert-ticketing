@@ -5,8 +5,6 @@ import com.example.concertticketing.api.common.response.CommonResponse;
 import com.example.concertticketing.api.queue.dto.QueueRequest;
 import com.example.concertticketing.api.queue.dto.QueueResponse;
 import com.example.concertticketing.domain.exception.ErrorEnum;
-import com.example.concertticketing.domain.queue.model.Queue;
-import com.example.concertticketing.domain.queue.model.QueueStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest {
     @AfterEach
     void tearDown() {
-        queueRepository.deleteAllInBatch();
+        queueRepository.flushAll();
         memberRepository.deleteAllInBatch();
     }
 
@@ -43,8 +41,7 @@ public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest 
         assertThat(body.getCode()).isEqualTo(ErrorEnum.SUCCESS.getCode());
         assertThat(body.getMessage()).isEqualTo(ErrorEnum.SUCCESS.getMessage());
         assertThat(data.getMemberId()).isEqualTo(memberId);
-        assertThat(data.getStatus()).isEqualTo(QueueStatus.WAIT);
-        assertThat(data.getPosition()).isEqualTo(0L);
+        assertThat(data.getPosition()).isEqualTo(1L);
     }
 
     @DisplayName("대기중인 사람이 있고 새로운 유저가 토큰을 발급한다")
@@ -67,8 +64,7 @@ public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest 
         assertThat(body.getCode()).isEqualTo(ErrorEnum.SUCCESS.getCode());
         assertThat(body.getMessage()).isEqualTo(ErrorEnum.SUCCESS.getMessage());
         assertThat(data.getMemberId()).isEqualTo(memberId);
-        assertThat(data.getStatus()).isEqualTo(QueueStatus.WAIT);
-        assertThat(data.getPosition()).isEqualTo(2L);
+        assertThat(data.getPosition()).isEqualTo(3L);
     }
 
     @DisplayName("토큰이 만료되지 않은 유저가 토큰을 재발급하면 원래 존재하는 토큰을 반환한다")
@@ -77,7 +73,7 @@ public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest 
         // given
         setUpQueue();
         Long memberId = findFirstMemberId() + 5L;
-        Long queueId = findFirstQueueId() + 5L;
+        Long queueId = findFirstMemberId() + 5L;
         String url = "http://localhost:" + port + "/api/queue/issue";
 
         QueueRequest request = new QueueRequest(memberId);
@@ -86,67 +82,39 @@ public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest 
         HttpEntity<QueueRequest> header = setHeaderNoCheck(request);
         ResponseEntity<CommonResponse<QueueResponse>> response = restTemplate.exchange(url, HttpMethod.POST, header, new ParameterizedTypeReference<>() {});
         CommonResponse<QueueResponse> body = response.getBody();
-        QueueResponse data = body.getData();
 
-        Queue queue = queueRepository.findById(queueId).get();
-
-        // then
-        assertThat(body.getCode()).isEqualTo(ErrorEnum.SUCCESS.getCode());
-        assertThat(body.getMessage()).isEqualTo(ErrorEnum.SUCCESS.getMessage());
-        assertThat(data.getToken()).isEqualTo(queue.getToken());
-    }
-
-    @DisplayName("active 상태인 현재 나의 토큰 정보를 반환한다")
-    @Test
-    void getInfo_active() {
-        // given
-        setUpQueue();
-        Long memberId = findFirstMemberId() + 3L;
-        Long queueId = findFirstQueueId() + 3L;
-        String url = "http://localhost:" + port + "/api/queue/issue";
-
-        QueueRequest request = new QueueRequest(memberId);
-
-        // when
-        HttpEntity<QueueRequest> header = setHeaderNoCheck(request);
-        ResponseEntity<CommonResponse<QueueResponse>> response = restTemplate.exchange(url, HttpMethod.POST, header, new ParameterizedTypeReference<>() {});
-        CommonResponse<QueueResponse> body = response.getBody();
-        QueueResponse data = body.getData();
-
-        Queue queue = queueRepository.findById(queueId).get();
+        boolean inWait = queueRepository.isInWaitingTokens(queueId);
 
         // then
         assertThat(body.getCode()).isEqualTo(ErrorEnum.SUCCESS.getCode());
         assertThat(body.getMessage()).isEqualTo(ErrorEnum.SUCCESS.getMessage());
-        assertThat(data.getToken()).isEqualTo(queue.getToken());
+        assertThat(inWait).isEqualTo(true);
     }
 
-    @DisplayName("wait 상태인 현재 나의 토큰 정보를 반환한다")
+    @DisplayName("WAIT 상태인 현재 나의 토큰 정보를 반환한다")
     @Test
     void getInfo_wait() {
         // given
         setUpQueue();
         Long memberId = findFirstMemberId() + 5L;
-        Long queueId = findFirstQueueId() + 5L;
-        String url = "http://localhost:" + port + "/api/queue/issue";
+        String url = "http://localhost:" + port + "/api/queue/" + memberId;
 
         QueueRequest request = new QueueRequest(memberId);
 
         // when
         HttpEntity<QueueRequest> header = setHeaderNoCheck(request);
-        ResponseEntity<CommonResponse<QueueResponse>> response = restTemplate.exchange(url, HttpMethod.POST, header, new ParameterizedTypeReference<>() {});
+        ResponseEntity<CommonResponse<QueueResponse>> response = restTemplate.exchange(url, HttpMethod.GET, header, new ParameterizedTypeReference<>() {});
         CommonResponse<QueueResponse> body = response.getBody();
         QueueResponse data = body.getData();
-
-        Queue queue = queueRepository.findById(queueId).get();
 
         // then
         assertThat(body.getCode()).isEqualTo(ErrorEnum.SUCCESS.getCode());
         assertThat(body.getMessage()).isEqualTo(ErrorEnum.SUCCESS.getMessage());
-        assertThat(data.getToken()).isEqualTo(queue.getToken());
+        assertThat(data.getMemberId()).isEqualTo(memberId);
+        assertThat(data.getPosition()).isEqualTo(2);
     }
 
-    @DisplayName("토큰 정보 조회 시 토큰이 만료되어 에러를 반환한다")
+    @DisplayName("WAIT 상태의 토큰이 존재하지 않으면 에러를 반환한다")
     @Test
     void getInfo_token_expired() {
         // given
@@ -157,10 +125,9 @@ public class QueueControllerIntegrateTest extends CommonControllerIntegrateTest 
         // when
         ResponseEntity<CommonResponse<QueueResponse>> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(null), new ParameterizedTypeReference<>() {});
         CommonResponse<QueueResponse> body = response.getBody();
-        QueueResponse data = body.getData();
 
         // then
-        assertThat(body.getCode()).isEqualTo(ErrorEnum.TOKEN_EXPIRED.getCode());
-        assertThat(body.getMessage()).isEqualTo(ErrorEnum.TOKEN_EXPIRED.getMessage());
+        assertThat(body.getCode()).isEqualTo(ErrorEnum.NO_WAIT_TOKEN.getCode());
+        assertThat(body.getMessage()).isEqualTo(ErrorEnum.NO_WAIT_TOKEN.getMessage());
     }
 }

@@ -1,12 +1,7 @@
 package com.example.concertticketing.domain.queue.service;
 
-import com.example.concertticketing.domain.exception.CustomException;
-import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.member.repository.MemberRepository;
-import com.example.concertticketing.domain.member.service.MemberService;
-import com.example.concertticketing.domain.queue.model.Queue;
-import com.example.concertticketing.domain.queue.model.QueueStatus;
 import com.example.concertticketing.domain.queue.repository.QueueRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
@@ -16,9 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.time.ZoneOffset;
+import java.util.Set;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * findFirstMemberId, findFirstQueueId
@@ -48,38 +44,27 @@ public class QueueServiceIntegrateTest {
                     .build();
 
             memberRepository.save(member);
-
-            QueueStatus status;
-            LocalDateTime time = null;
-            if (i < 3) {
-                status = QueueStatus.EXPIRED;
-                time = LocalDateTime.of(2024, 6, 12, 0, 0, 0);
-            } else if (i < 6) {
-                status = QueueStatus.ACTIVE;
-                time = LocalDateTime.of(2024, 6, 12, 0, 5, 0);
-            } else {
-                status = QueueStatus.WAIT;
-            }
-
-            Queue queue = Queue.builder()
-                    .token(UUID.randomUUID())
-                    .member(member)
-                    .expiredAt(time)
-                    .status(status)
-                    .build();
-            queueRepository.save(queue);
         }
+
+        Long memberId = findFirstMemberId();
+
+        for (int i = 6; i < 9; i++) {
+            queueRepository.addWaitingQueue(memberId + i);
+        }
+
+        Set<String> activeSet = Set.of(
+                memberId + 3L + ":" + LocalDateTime.of(2024, 6, 12, 0, 5, 0).toEpochSecond(ZoneOffset.UTC),
+                memberId + 4L + ":" + LocalDateTime.of(2024, 6, 12, 0, 5, 0).toEpochSecond(ZoneOffset.UTC),
+                memberId + 5L + ":" + LocalDateTime.of(2024, 6, 12, 0, 5, 0).toEpochSecond(ZoneOffset.UTC)
+        );
+
+        queueRepository.addActiveQueues(activeSet);
     }
 
     @AfterEach
     void tearDown() {
-        queueRepository.deleteAllInBatch();
+        queueRepository.flushAll();
         memberRepository.deleteAllInBatch();
-    }
-
-    Long findFirstQueueId() {
-        return (Long) entityManager.createNativeQuery("SELECT id FROM QUEUE LIMIT 1")
-                .getSingleResult();
     }
 
     Long findFirstMemberId() {
@@ -92,7 +77,7 @@ public class QueueServiceIntegrateTest {
     void verify_true() {
         // given
         setUp();
-        Long memberId = findFirstMemberId() + 5L;
+        Long memberId = findFirstMemberId() + 4L;
 
         // when
         boolean verify = queueService.verify(memberId);
@@ -101,7 +86,7 @@ public class QueueServiceIntegrateTest {
         assertThat(verify).isEqualTo(true);
     }
 
-    @DisplayName("토큰이 유효한지 검증하고 유효하지 않으면  false 를 반환한다")
+    @DisplayName("토큰이 유효한지 검증하고 유효하지 않으면 false 를 반환한다")
     @Test
     void verify_false() {
         // given
@@ -120,17 +105,19 @@ public class QueueServiceIntegrateTest {
     void updateActiveTokenToExpired() {
         // given
         setUp();
-        Long queueId = findFirstQueueId() + 5L;
+
+        String key = findFirstMemberId() + 5L + ":" + LocalDateTime.of(2024, 6, 12, 0, 5, 0).toEpochSecond(ZoneOffset.UTC);
         LocalDateTime now = LocalDateTime.of(2024, 6, 12, 0, 6, 0);
 
         // when
-        Queue prevQueue = queueRepository.findById(queueId).get();
+        boolean prev = queueRepository.isInActiveTokens(key);
         queueService.updateActiveTokenToExpired(now);
-        Queue currQueue = queueRepository.findById(queueId).get();
+        boolean curr = queueRepository.isInActiveTokens(key);
+
 
         // then
-        assertThat(prevQueue.getStatus()).isEqualTo(QueueStatus.ACTIVE);
-        assertThat(currQueue.getStatus()).isEqualTo(QueueStatus.EXPIRED);
+        assertThat(prev).isEqualTo(true);
+        assertThat(curr).isEqualTo(false);
     }
 
     @DisplayName("활성 토큰 중 만료 기간이 지나지 않았으면 작업을 하지 않는다")
@@ -138,17 +125,18 @@ public class QueueServiceIntegrateTest {
     void updateActiveTokenToExpired_fail() {
         // given
         setUp();
-        Long queueId = findFirstQueueId() + 5L;
+
+        String key = findFirstMemberId() + 5L + ":" + LocalDateTime.of(2024, 6, 12, 0, 5, 0).toEpochSecond(ZoneOffset.UTC);
         LocalDateTime now = LocalDateTime.of(2024, 6, 12, 0, 4, 0);
 
         // when
-        Queue prevQueue = queueRepository.findById(queueId).get();
+        boolean prev = queueRepository.isInActiveTokens(key);
         queueService.updateActiveTokenToExpired(now);
-        Queue currQueue = queueRepository.findById(queueId).get();
+        boolean curr = queueRepository.isInActiveTokens(key);
 
         // then
-        assertThat(prevQueue.getStatus()).isEqualTo(QueueStatus.ACTIVE);
-        assertThat(currQueue.getStatus()).isEqualTo(QueueStatus.ACTIVE);
+        assertThat(prev).isEqualTo(true);
+        assertThat(curr).isEqualTo(true);
     }
 
     @DisplayName("대기중인 토큰을 활성상태로 변경한다")
@@ -156,61 +144,18 @@ public class QueueServiceIntegrateTest {
     void updateWaitTokenToActive() {
         // given
         setUp();
-        Long queueId = findFirstQueueId() + 8L;
+        Long memberId = findFirstMemberId() + 8L;
         LocalDateTime now = LocalDateTime.of(2024, 6, 12, 0, 5, 0);
 
         // when
-        Queue prevQueue = queueRepository.findById(queueId).get();
+        boolean prev = queueRepository.isInWaitingTokens(memberId);
         // 입장 가능한 인원만큼 변경 가능한데 현재 ACTIVE 인원이 3이고
         // queueId가 WAIT 의 마지막이라 3명이 더 입장가능한 available 값을 설정
         queueService.updateWaitTokenToActive(now,6);
-        Queue currQueue = queueRepository.findById(queueId).get();
+        boolean curr = queueRepository.isInWaitingTokens(memberId);
 
         // then
-        assertThat(prevQueue.getStatus()).isEqualTo(QueueStatus.WAIT);
-        assertThat(currQueue.getStatus()).isEqualTo(QueueStatus.ACTIVE);
+        assertThat(prev).isEqualTo(true);
+        assertThat(curr).isEqualTo(false);
     }
-
-    @DisplayName("대기중인 토큰을 활성상태로 변경 시 최대 활성가능 인원이 다 찼으면 작업을 하지 않는다")
-    @Test
-    void updateWaitTokenToActive_fail() {
-        // given
-        setUp();
-        LocalDateTime now = LocalDateTime.of(2024, 6, 12, 0, 5, 0);
-
-        // when then
-        assertThatThrownBy(() -> queueService.updateWaitTokenToActive(now,3))
-                .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorEnum.NO_MORE_ACTIVE_TOKEN.getMessage());
-    }
-
-//    @DisplayName("활성 상태의 토큰을 만료시킨다")
-//    @Test
-//    void expiredToken() {
-//        // given
-//        setUp();
-//        Long queueId = findFirstQueueId() + 5L;
-//
-//        // when
-//        Queue prevQueue = queueRepository.findById(queueId).get();
-//        queueService.expiredToken(queueId, QueueStatus.EXPIRED);
-//        Queue currQueue = queueRepository.findById(queueId).get();
-//
-//        // then
-//        assertThat(prevQueue.getStatus()).isEqualTo(QueueStatus.ACTIVE);
-//        assertThat(currQueue.getStatus()).isEqualTo(QueueStatus.EXPIRED);
-//    }
-//
-//    @DisplayName("활성상태의 토큰을 만료시키는데 이미 만료되었다면 에러를 반환한다")
-//    @Test
-//    void expiredToken_already_expired() {
-//        // given
-//        setUp();
-//        Long queueId = findFirstQueueId();
-//
-//        // when then
-//        assertThatThrownBy(() -> queueService.expiredToken(queueId,QueueStatus.EXPIRED))
-//                .isInstanceOf(CustomException.class)
-//                .hasMessage(ErrorEnum.TOKEN_EXPIRED.getMessage());
-//    }
 }

@@ -10,7 +10,6 @@ import com.example.concertticketing.domain.member.repository.MemberRepository;
 import com.example.concertticketing.domain.member.service.MemberService;
 import com.example.concertticketing.domain.pay.repository.PayRepository;
 import com.example.concertticketing.domain.queue.model.Queue;
-import com.example.concertticketing.domain.queue.model.QueueStatus;
 import com.example.concertticketing.domain.queue.repository.QueueRepository;
 import com.example.concertticketing.domain.queue.service.QueueService;
 import com.example.concertticketing.domain.reservation.model.Reservation;
@@ -20,14 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 
 /**
  * TestRestTemplate 사용 시 RANDOM_PORT 아니면 Bean 주입 안됨
@@ -74,13 +73,8 @@ public abstract class CommonControllerIntegrateTest {
                 .build();
     }
 
-    public Queue createQueue(Member member, QueueStatus status, LocalDateTime expiredAt) {
-        return Queue.builder()
-                .token(UUID.randomUUID())
-                .member(member)
-                .status(status)
-                .expiredAt(expiredAt)
-                .build();
+    public Queue createQueue(Long memberId, LocalDateTime expiredAt) {
+        return new Queue(memberId, expiredAt.toEpochSecond(ZoneOffset.UTC));
     }
 
     public Concert createConcert(String singer) {
@@ -125,26 +119,31 @@ public abstract class CommonControllerIntegrateTest {
                 createMember("A5", 4000L),
                 createMember("A6", 3000L)
         );
+        memberRepository.saveAll(memberList);
 
-        List<Queue> queueList = List.of(
-                createQueue(memberList.get(0), QueueStatus.EXPIRED, LocalDateTime.of(2024, 6, 12, 0, 0, 0)),
-                createQueue(memberList.get(1), QueueStatus.EXPIRED, LocalDateTime.of(2024, 6, 12, 0, 0, 0)),
-                createQueue(memberList.get(2), QueueStatus.ACTIVE, LocalDateTime.of(2024, 6, 12, 0, 5, 0)),
-                createQueue(memberList.get(3), QueueStatus.ACTIVE, LocalDateTime.of(2024, 6, 12, 0, 5, 0)),
-                createQueue(memberList.get(4), QueueStatus.WAIT, null),
-                createQueue(memberList.get(5), QueueStatus.WAIT, null)
+        Long memberId = findFirstMemberId();
+
+        Set<String> activeSet = Set.of(
+                memberId + ":" + LocalDateTime.of(2024, 6, 12, 0, 0, 0).toEpochSecond(ZoneOffset.UTC),
+                (memberId + 1) + ":" + LocalDateTime.of(2024, 6, 12, 0, 0, 0).toEpochSecond(ZoneOffset.UTC),
+                (memberId + 2) + ":" + LocalDateTime.of(2024, 6, 12, 0, 5, 0).toEpochSecond(ZoneOffset.UTC),
+                (memberId + 3) + ":" + LocalDateTime.of(2024, 6, 12, 0, 5, 0).toEpochSecond(ZoneOffset.UTC)
         );
 
-        memberRepository.saveAll(memberList);
-        queueRepository.saveAll(queueList);
+        for (int i = 4; i < 6; i++) {
+            queueRepository.addWaitingQueue(memberId + i);
+        }
+
+        queueRepository.addActiveQueues(activeSet);
     }
 
     protected void setUpConcert() {
         Member member = createMember("A1", 5000L);
         memberRepository.save(member);
 
-        Queue queue = createQueue(member, QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1));
-        queueRepository.save(queue);
+        Long memberId = findFirstMemberId();
+        String value = memberId + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC);
+        queueRepository.addActiveQueues(Set.of(value));
 
         Concert concert = createConcert("박효신");
         concertRepository.saveConcert(concert);
@@ -177,8 +176,9 @@ public abstract class CommonControllerIntegrateTest {
         Member member = createMember("A1", 5000L);
         memberRepository.save(member);
 
-        Queue queue = createQueue(member, QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1));
-        queueRepository.save(queue);
+        Long memberId = findFirstMemberId();
+        String value = memberId + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC);
+        queueRepository.addActiveQueues(Set.of(value));
 
         Concert concert = createConcert("박효신");
         concertRepository.saveConcert(concert);
@@ -203,8 +203,9 @@ public abstract class CommonControllerIntegrateTest {
         Member member = createMember("A1", 5000L);
         memberRepository.save(member);
 
-        Queue queue = createQueue(member, QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1));
-        queueRepository.save(queue);
+        Long memberId = findFirstMemberId();
+        String value = memberId + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC);
+        queueRepository.addActiveQueues(Set.of(value));
 
         Concert concert = createConcert("박효신");
         concertRepository.saveConcert(concert);
@@ -259,11 +260,6 @@ public abstract class CommonControllerIntegrateTest {
 
     protected Long findFirstReservationId() {
         return (Long) entityManager.createNativeQuery("SELECT id FROM RESERVATION LIMIT 1")
-                .getSingleResult();
-    }
-
-    protected Long findFirstQueueId() {
-        return (Long) entityManager.createNativeQuery("SELECT id FROM QUEUE LIMIT 1")
                 .getSingleResult();
     }
 

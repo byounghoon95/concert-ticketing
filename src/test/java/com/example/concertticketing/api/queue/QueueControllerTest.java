@@ -2,13 +2,10 @@ package com.example.concertticketing.api.queue;
 
 import com.example.concertticketing.CommonControllerTest;
 import com.example.concertticketing.api.queue.dto.QueueRequest;
-import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.queue.model.Queue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-
-import java.util.UUID;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
@@ -25,19 +22,11 @@ class QueueControllerTest extends CommonControllerTest {
     void enqueue() throws Exception {
         // given
         Long memberId = 1L;
-        UUID uuid = UUID.randomUUID();
         Long position = 3L;
 
-        Member member = Member.builder()
-                .id(memberId)
-                .build();
         QueueRequest request = new QueueRequest(memberId);
 
-        Queue queue = Queue.builder()
-                .token(uuid)
-                .member(member)
-                .position(position)
-                .build();
+        Queue queue = new Queue(memberId, position);
 
         // when
         when(queueService.enqueue(any())).thenReturn(queue);
@@ -50,7 +39,6 @@ class QueueControllerTest extends CommonControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.memberId").value(memberId))
-                .andExpect(jsonPath("$.data.token").value(uuid.toString()))
                 .andExpect(jsonPath("$.data.position").value(position))
         ;
     }
@@ -60,16 +48,9 @@ class QueueControllerTest extends CommonControllerTest {
     void getInfo() throws Exception {
         // given
         Long memberId = 1L;
-        UUID uuid = UUID.randomUUID();
         Long position = 3L;
-        Member member = Member.builder()
-                .id(memberId)
-                .build();
-        Queue queue = Queue.builder()
-                .token(uuid)
-                .member(member)
-                .position(position)
-                .build();
+
+        Queue queue = new Queue(memberId, position);
 
         // when
         when(queueService.getInfo(any())).thenReturn(queue);
@@ -79,7 +60,6 @@ class QueueControllerTest extends CommonControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.memberId").value(memberId))
-                .andExpect(jsonPath("$.data.token").value(uuid.toString()))
                 .andExpect(jsonPath("$.data.position").value(position))
         ;
     }

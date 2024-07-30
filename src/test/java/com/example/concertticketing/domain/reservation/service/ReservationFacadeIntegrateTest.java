@@ -8,13 +8,11 @@ import com.example.concertticketing.domain.concert.repository.SeatRepository;
 import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.member.repository.MemberRepository;
 import com.example.concertticketing.domain.queue.model.Queue;
-import com.example.concertticketing.domain.queue.model.QueueStatus;
 import com.example.concertticketing.domain.queue.repository.QueueRepository;
 import com.example.concertticketing.domain.reservation.application.ReservationFacade;
 import com.example.concertticketing.domain.reservation.model.Reservation;
 import com.example.concertticketing.domain.reservation.repository.ReservationRepository;
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -23,8 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -57,7 +56,7 @@ public class ReservationFacadeIntegrateTest {
     private EntityManager entityManager;
 
     void tearDown() {
-        queueRepository.deleteAllInBatch();
+        queueRepository.flushAll();
         memberRepository.deleteAllInBatch();
         concertRepository.deleteAllInBatch();
         seatRepository.deleteAllInBatch();
@@ -71,13 +70,8 @@ public class ReservationFacadeIntegrateTest {
                 .build();
     }
 
-    private Queue createQueue(Member member, QueueStatus status, LocalDateTime expiredAt) {
-        return Queue.builder()
-                .token(UUID.randomUUID())
-                .member(member)
-                .status(status)
-                .expiredAt(expiredAt)
-                .build();
+    public Queue createQueue(Long memberId, LocalDateTime expiredAt) {
+        return new Queue(memberId, expiredAt.toEpochSecond(ZoneOffset.UTC));
     }
 
     private Concert createConcert(String singer) {
@@ -109,8 +103,13 @@ public class ReservationFacadeIntegrateTest {
                 .getSingleResult();
     }
 
-    protected Seat findFirstSeat() {
+    private Seat findFirstSeat() {
         return (Seat) entityManager.createNativeQuery("SELECT * FROM SEAT LIMIT 1", Seat.class)
+                .getSingleResult();
+    }
+
+    private Long findFirstMemberId() {
+        return (Long) entityManager.createNativeQuery("SELECT id FROM MEMBER LIMIT 1")
                 .getSingleResult();
     }
 
@@ -129,19 +128,21 @@ public class ReservationFacadeIntegrateTest {
         );
         memberRepository.saveAll(members);
 
-        List<Queue> queues = List.of(
-                createQueue(members.get(0), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(1), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(2), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(3), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(4), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(5), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(6), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(7), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(8), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1)),
-                createQueue(members.get(9), QueueStatus.ACTIVE, LocalDateTime.now().plusMinutes(1))
+        Long memberId = findFirstMemberId();
+
+        Set<String> activeSet = Set.of(
+                (memberId) + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC),
+                (memberId + 1) + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC),
+                (memberId + 2) + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC),
+                (memberId + 3) + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC),
+                (memberId + 4) + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC),
+                (memberId + 5) + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC),
+                (memberId + 6) + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC),
+                (memberId + 7) + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC),
+                (memberId + 8) + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC),
+                (memberId + 9) + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC)
         );
-        queueRepository.saveAll(queues);
+        queueRepository.addActiveQueues(activeSet);
 
         Concert concert = createConcert("박효신");
         concertRepository.saveConcert(concert);

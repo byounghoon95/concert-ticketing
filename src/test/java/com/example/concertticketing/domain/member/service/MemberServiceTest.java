@@ -58,7 +58,7 @@ class MemberServiceTest {
                 .build();
 
         // when
-        when(memberRepository.findById(any())).thenReturn(Optional.of(mockMember));
+        when(memberRepository.selectMemberWithLock(any())).thenReturn(Optional.of(mockMember));
 
         MemberChargeRequest request = new MemberChargeRequest(memberId, chargeAmount);
 
