@@ -7,6 +7,8 @@ import com.example.concertticketing.domain.concert.model.Concert;
 import com.example.concertticketing.domain.concert.model.ConcertDate;
 import com.example.concertticketing.domain.concert.model.ConcertDetail;
 import com.example.concertticketing.domain.concert.model.Seat;
+import com.example.concertticketing.domain.exception.CustomException;
+import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.example.concertticketing.domain.util.JsonConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,8 +40,8 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
-    public void saveConcert(Concert concert) {
-        concertJpaRepository.save(concert);
+    public Concert saveConcert(Concert concert) {
+        return concertJpaRepository.save(concert);
     }
 
     @Override
@@ -60,6 +62,12 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     @Override
     public void addCache(Long concertId, ConcertDate concertDate) {
         redisTemplate.opsForValue().set(CACHE_KEY + ":" + concertId, jsonConverter.toJson(concertDate), 5, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public ConcertDetail findConcertDetail(Long concertDetailId) {
+        return concertDetailJpaRepository.findById(concertDetailId)
+                .orElseThrow(() -> new CustomException(ErrorEnum.NO_CONCERT));
     }
 
     @Override

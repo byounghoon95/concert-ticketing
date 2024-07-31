@@ -12,9 +12,10 @@ import java.util.List;
 public interface ConcertRepository {
     List<ConcertDetail> findConcertDates(Long concertId);
     List<Seat> findAvailableSeats(Long concertDetailId, LocalDateTime time);
-    void saveConcert(Concert concert);
+    Concert saveConcert(Concert concert);
     void deleteAllInBatch();
     void saveConcertDetailAll(List<ConcertDetail> detailList);
     ConcertDate findConcertDatesFromCache(Long concertId);
     void addCache(Long concertId,ConcertDate concertDate);
+    ConcertDetail findConcertDetail(Long concertDetailId);
 }
