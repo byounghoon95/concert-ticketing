@@ -11,6 +11,8 @@ spring:
     properties:
       hibernate:
         use_sql_comments: true
+  cache:
+    type: redis
   data:
     redis:
       host: localhost
