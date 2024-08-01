@@ -2,6 +2,7 @@
 ### 유저 토큰 발급
 - 서비스를 이용할 토큰을 발급받는다
 - 토큰은 유저의 UUID 와 해당 유저의 대기열을 관리할 수 있는 정보(대기 순서 or 잔여 시간 등) 를 포함한다
+    - Redis 적용하며  UUID 대신 유저 ID 를 이용한 기능으로 수정
 - 이후 모든 API 는 위 토큰을 이용해 대기열 검증을 통과해야 이용 가능하다
 
 ### 예약 가능 날짜 / 좌석
@@ -32,10 +33,13 @@ https://github.com/users/byounghoon95/projects/7
 ![ERDv1.png](src%2Fmain%2Fresources%2Fdocs%2FERDv1.png)
 
 # Sequence Diagram
-![sequence-diagram.jpg](src%2Fmain%2Fresources%2Fdocs%2Fsequence-diagram.jpg)
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/sequence.md)
 
 # API 명세
 ### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/api-docs.md)
 
-# 락 고찰
+# 디비 동시성 분석
 ### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/lock.md)
+
+# Redis 캐싱 적용하기
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/cache.md)
