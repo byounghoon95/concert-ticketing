@@ -113,7 +113,7 @@ public class QueueServiceIntegrateTest {
 
         // when
         boolean prev = queueRepository.isInActiveTokens(key);
-        queueService.updateActiveTokenToExpired(now);
+        queueService.expireActiveTokens(now);
         boolean curr = queueRepository.isInActiveTokens(key);
 
 
@@ -133,7 +133,7 @@ public class QueueServiceIntegrateTest {
 
         // when
         boolean prev = queueRepository.isInActiveTokens(key);
-        queueService.updateActiveTokenToExpired(now);
+        queueService.expireActiveTokens(now);
         boolean curr = queueRepository.isInActiveTokens(key);
 
         // then

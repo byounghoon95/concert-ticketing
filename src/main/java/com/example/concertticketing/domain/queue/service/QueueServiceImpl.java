@@ -54,7 +54,7 @@ public class QueueServiceImpl implements QueueService {
 
     @Transactional
     @Override
-    public void updateActiveTokenToExpired(LocalDateTime time) {
+    public void expireActiveTokens(LocalDateTime time) {
         Set<ActiveQueue> tokens = queueRepository.getActiveTokens();
         if (tokens.isEmpty()) {
             return;
@@ -99,7 +99,7 @@ public class QueueServiceImpl implements QueueService {
     }
 
     @Override
-    public void expiredToken(Long memberId) {
+    public void expireActiveToken(Long memberId) {
         Set<ActiveQueue> tokens = queueRepository.getActiveTokens();
         if (tokens.isEmpty()) {
             return;
