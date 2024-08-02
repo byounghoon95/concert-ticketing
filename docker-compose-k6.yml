@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  k6:
+    image: loadimpact/k6:latest
+    container_name: k6
+    volumes:
+      - ./scripts:/scripts
+    entrypoint: ["k6", "run"]
+    command: ["--out", "influxdb=http://influxdb:8086/myk6db", "/scripts/getAvailableDates.js"]

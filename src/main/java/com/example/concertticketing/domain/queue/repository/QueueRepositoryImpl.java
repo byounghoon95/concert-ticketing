@@ -1,70 +1,89 @@
 package com.example.concertticketing.domain.queue.repository;
 
-import com.example.concertticketing.domain.queue.infrastructure.QueueJpaRepository;
-import com.example.concertticketing.domain.queue.model.Queue;
-import com.example.concertticketing.domain.queue.model.QueueStatus;
+import com.example.concertticketing.domain.queue.model.ActiveQueue;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.connection.DefaultStringRedisConnection;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.time.ZoneOffset;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Repository
 public class QueueRepositoryImpl implements QueueRepository {
 
-    private final QueueJpaRepository queueJpaRepository;
+    private final RedisTemplate redisTemplate;
+    private static final String WAITING_TOKENS_KEY = "waitingTokens";
+    private static final String ACTIVE_TOKENS_KEY = "activeTokens";
 
     @Override
-    public Queue save(Queue queue) {
-        return queueJpaRepository.save(queue);
+    public void addWaitingQueue(Long memberId) {
+        LocalDateTime now = LocalDateTime.now();
+       redisTemplate.opsForZSet().add(WAITING_TOKENS_KEY, memberId.toString(), now.toEpochSecond(ZoneOffset.UTC));
     }
 
     @Override
-    public void saveAll(List<Queue> queue) {
-        queueJpaRepository.saveAll(queue);
+    public Set<String> getWaitTokens(int count) {
+        return redisTemplate.opsForZSet().range(WAITING_TOKENS_KEY, 0, count);
     }
 
     @Override
-    public Optional<Queue> findValidTokenByMemberId(Long memberId, QueueStatus status) {
-        return queueJpaRepository.findByMemberIdAndStatusNot(memberId, status);
+    public boolean isInWaitingTokens(Long memberId) {
+        return redisTemplate.opsForZSet().score(WAITING_TOKENS_KEY, String.valueOf(memberId)) != null;
     }
 
     @Override
-    public void updateActiveTokenToExpired(LocalDateTime time) {
-        queueJpaRepository.updateActiveTokenToExpired(time);
+    public Long getPosition(Long memberId) {
+        Long rank = redisTemplate.opsForZSet().rank(WAITING_TOKENS_KEY, memberId.toString());
+        return rank != null ? rank + 1 : -1;
     }
 
     @Override
-    public List<Queue> findFirstWaitMember(QueueStatus status, Pageable pageable) {
-        return queueJpaRepository.findByStatus(status, pageable);
+    public void removeWaitQueue(String memberId) {
+        redisTemplate.opsForZSet().remove(ACTIVE_TOKENS_KEY, memberId);
     }
 
     @Override
-    public int countActiveMember(QueueStatus status) {
-        return queueJpaRepository.countByStatus(status);
+    public void removeWaitQueues(Set<String> members) {
+        redisTemplate.opsForZSet().remove(WAITING_TOKENS_KEY, members.toArray());
     }
 
     @Override
-    public List<Queue> findWaitMemberList(QueueStatus prev, PageRequest pageable) {
-        return queueJpaRepository.findByStatus(prev, pageable);
+    public void addActiveQueues(Set<String> members) {
+        redisTemplate.opsForSet().add(ACTIVE_TOKENS_KEY, members.toArray());
     }
 
     @Override
-    public Optional<Queue> findActiveTokenByMemberId(Long memberId, QueueStatus status) {
-        return queueJpaRepository.findByMemberIdAndStatus(memberId, status);
+    public Set<ActiveQueue> getActiveTokens() {
+        return (Set<ActiveQueue>) redisTemplate.opsForSet().members(ACTIVE_TOKENS_KEY).stream()
+                .map(value -> {
+                    String val = value.toString();
+                    String[] split = val.split(":");
+                    return new ActiveQueue(split[0], split[1]);
+                })
+                .collect(Collectors.toSet());
     }
 
     @Override
-    public void deleteAllInBatch() {
-        queueJpaRepository.deleteAllInBatch();
+    public boolean isInActiveTokens(String value) {
+        return redisTemplate.opsForSet().isMember(ACTIVE_TOKENS_KEY, value);
     }
 
     @Override
-    public Optional<Queue> findById(Long id) {
-        return queueJpaRepository.findById(id);
+    public void removeActiveQueue(String value) {
+        redisTemplate.opsForSet().remove(ACTIVE_TOKENS_KEY, value);
+    }
+
+    @Override
+    public void flushAll() {
+        RedisConnection redisConnection = this.redisTemplate.getConnectionFactory().getConnection();
+        RedisSerializer<String> redisSerializer = this.redisTemplate.getKeySerializer();
+        DefaultStringRedisConnection defaultStringRedisConnection = new DefaultStringRedisConnection(redisConnection, redisSerializer);
+        defaultStringRedisConnection.flushAll();
     }
 }

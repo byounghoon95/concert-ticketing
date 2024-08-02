@@ -19,7 +19,7 @@ public class ReservationControllerIntegrateTest extends CommonControllerIntegrat
 
     @AfterEach
     void tearDown() {
-        queueRepository.deleteAllInBatch();
+        queueRepository.flushAll();
         memberRepository.deleteAllInBatch();
         concertRepository.deleteAllInBatch();
         seatRepository.deleteAllInBatch();

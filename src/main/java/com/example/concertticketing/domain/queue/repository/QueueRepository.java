@@ -1,32 +1,31 @@
 package com.example.concertticketing.domain.queue.repository;
 
 
-import com.example.concertticketing.domain.queue.model.Queue;
-import com.example.concertticketing.domain.queue.model.QueueStatus;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import com.example.concertticketing.domain.queue.model.ActiveQueue;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 public interface QueueRepository {
-    Queue save(Queue queue);
-    void saveAll(List<Queue> queue);
-    Optional<Queue> findValidTokenByMemberId(Long memberId, QueueStatus status);
 
-    void updateActiveTokenToExpired(LocalDateTime time);
+    void addWaitingQueue(Long memberId);
 
-    List<Queue> findFirstWaitMember(QueueStatus status, Pageable pageable);
+    boolean isInWaitingTokens(Long memberId);
 
-    int countActiveMember(QueueStatus status);
+    Long getPosition(Long memberId);
 
-    List<Queue> findWaitMemberList(QueueStatus prev, PageRequest pageable);
+    Set<String> getWaitTokens(int count);
 
-    Optional<Queue> findActiveTokenByMemberId(Long memberId, QueueStatus status);
+    void removeWaitQueue(String memberId);
 
-    void deleteAllInBatch();
+    void removeWaitQueues(Set<String> members);
 
-    Optional<Queue> findById(Long id);
+    void addActiveQueues(Set<String> members);
 
+    Set<ActiveQueue> getActiveTokens();
+
+    boolean isInActiveTokens(String value);
+
+    void removeActiveQueue(String value);
+
+    void flushAll();
 }
