@@ -7,8 +7,6 @@ import com.example.concertticketing.api.pay.dto.PayResponse;
 import com.example.concertticketing.domain.concert.model.Seat;
 import com.example.concertticketing.domain.exception.ErrorEnum;
 import com.example.concertticketing.domain.member.model.Member;
-import com.example.concertticketing.domain.queue.model.Queue;
-import com.example.concertticketing.domain.queue.model.QueueStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +23,7 @@ public class PayControllerIntegrateTest extends CommonControllerIntegrateTest {
 
     @AfterEach
     void tearDown() {
-        queueRepository.deleteAllInBatch();
+        queueRepository.flushAll();
         memberRepository.deleteAllInBatch();
         concertRepository.deleteAllInBatch();
         reservationRepository.deleteAllInBatch();
@@ -38,7 +36,7 @@ public class PayControllerIntegrateTest extends CommonControllerIntegrateTest {
         // given
         setUpPay();
         Long memberId = findFirstMemberId();
-        Long queueId = findFirstQueueId();
+        Long queueId = findFirstMemberId();
         Seat seat = findFirstSeat();
         Long seatId = seat.getId() + 1L;
         Long reservationId = findFirstReservationId();
@@ -54,7 +52,6 @@ public class PayControllerIntegrateTest extends CommonControllerIntegrateTest {
 
         Member savedMember = memberRepository.findById(memberId).get();
         Seat savedSeat = seatRepository.findById(seatId).get();
-        Queue savedQueue = queueRepository.findById(queueId).get();
 
         // then
         assertThat(body.getCode()).isEqualTo(ErrorEnum.SUCCESS.getCode());
@@ -62,7 +59,6 @@ public class PayControllerIntegrateTest extends CommonControllerIntegrateTest {
         assertThat(data.getSeatNo()).isEqualTo(savedSeat.getSeatNo());
         assertThat(data.getAmount()).isEqualTo(4000L);
         assertThat(savedSeat.getReservedAt()).isEqualTo(LocalDateTime.of(9999, 12, 31, 23, 59, 59));
-        assertThat(savedQueue.getStatus()).isEqualTo(QueueStatus.EXPIRED);
         assertThat(savedMember.getBalance()).isEqualTo(1000L);
     }
 

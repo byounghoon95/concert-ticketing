@@ -22,12 +22,20 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     public ConcertDate selectAvailableDates(Long concertId) {
+        ConcertDate cacheData = concertRepository.findConcertDatesFromCache(concertId);
+        if (cacheData != null) {
+            return cacheData;
+        }
+
         List<ConcertDateDetails> details = concertRepository.findConcertDates(concertId).stream()
                 .map(entity -> new ConcertDateDetails(entity.getId(), entity.getDate()))
                 .collect(Collectors.toList());
-        return new ConcertDate(concertId, details);
-    }
 
+        ConcertDate concertDate = new ConcertDate(concertId, details);
+        concertRepository.addCache(concertId,concertDate);
+
+        return concertDate;
+    }
 
     @Override
     public ConcertSeat selectAvailableSeats(Long concertDetailId) {

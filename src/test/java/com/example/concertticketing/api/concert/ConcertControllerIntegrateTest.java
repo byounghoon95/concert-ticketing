@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ConcertControllerIntegrateTest extends CommonControllerIntegrateTest {
     @AfterEach
     void tearDown() {
-        queueRepository.deleteAllInBatch();
+        queueRepository.flushAll();
         concertRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
     }
@@ -73,8 +73,8 @@ public class ConcertControllerIntegrateTest extends CommonControllerIntegrateTes
         ConcertDate concertDate = body.getData();
 
         // then
-        assertThat(body.getCode()).isEqualTo(ErrorEnum.TOKEN_INACTIVE.getCode());
-        assertThat(body.getMessage()).isEqualTo(ErrorEnum.TOKEN_INACTIVE.getMessage());
+        assertThat(body.getCode()).isEqualTo(ErrorEnum.TOKEN_EXPIRED.getCode());
+        assertThat(body.getMessage()).isEqualTo(ErrorEnum.TOKEN_EXPIRED.getMessage());
         assertThat(concertDate).isNull();
     }
 
@@ -122,8 +122,8 @@ public class ConcertControllerIntegrateTest extends CommonControllerIntegrateTes
         ConcertSeat concertDate = body.getData();
 
         // then
-        assertThat(body.getCode()).isEqualTo(ErrorEnum.TOKEN_INACTIVE.getCode());
-        assertThat(body.getMessage()).isEqualTo(ErrorEnum.TOKEN_INACTIVE.getMessage());
+        assertThat(body.getCode()).isEqualTo(ErrorEnum.TOKEN_EXPIRED.getCode());
+        assertThat(body.getMessage()).isEqualTo(ErrorEnum.TOKEN_EXPIRED.getMessage());
         assertThat(concertDate).isNull();
     }
 }

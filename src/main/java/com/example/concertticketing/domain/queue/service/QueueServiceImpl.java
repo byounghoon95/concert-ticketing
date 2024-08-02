@@ -2,18 +2,17 @@ package com.example.concertticketing.domain.queue.service;
 
 import com.example.concertticketing.domain.exception.CustomException;
 import com.example.concertticketing.domain.exception.ErrorEnum;
-import com.example.concertticketing.domain.member.model.Member;
-import com.example.concertticketing.domain.member.service.MemberService;
+import com.example.concertticketing.domain.queue.model.ActiveQueue;
 import com.example.concertticketing.domain.queue.model.Queue;
-import com.example.concertticketing.domain.queue.model.QueueStatus;
 import com.example.concertticketing.domain.queue.repository.QueueRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.time.ZoneOffset;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -21,79 +20,81 @@ import java.util.List;
 public class QueueServiceImpl implements QueueService {
 
     private final QueueRepository queueRepository;
-    private final MemberService memberService;
 
-    /**
-     * 토큰 발급 시 이미 발급된 토큰이면
-     * 새로 발급없이 원래 토큰 반환
-     * */
     @Transactional
     @Override
     public Queue enqueue(Long memberId) {
-        Member member = memberService.getReferenceById(memberId);
-        Queue myQueue = queueRepository.findValidTokenByMemberId(memberId, QueueStatus.EXPIRED)
-                .orElseGet(() -> queueRepository.save(Queue.createWaitQueue(member)));
+        boolean inWait = queueRepository.isInWaitingTokens(memberId);
+        if (!inWait) {
+            queueRepository.addWaitingQueue(memberId);
+        }
 
-        List<Queue> queueList = queueRepository.findFirstWaitMember(QueueStatus.WAIT,PageRequest.of(0, 1));
+        Long position = queueRepository.getPosition(memberId);
 
-        Long position = myQueue.calculatePosition(queueList);
-
-        myQueue.updatePosition(position);
-        return myQueue;
+        return new Queue(memberId,position);
     }
 
     /**
-     * 유효한 토큰이 존재하면 true, 존재하지 않으면 false
+     * 유효한 토큰(active)이 존재하면 true, 존재하지 않으면 false
      * */
     public boolean verify(Long memberId) {
-        return queueRepository.findActiveTokenByMemberId(memberId, QueueStatus.ACTIVE).isPresent();
+        Set<ActiveQueue> tokens = queueRepository.getActiveTokens();
+        if (tokens.isEmpty()) {
+            return false;
+        }
+
+        for (ActiveQueue token : tokens) {
+            if (token.compareTokenKey(memberId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    /**
-     * ACTIVE 인 토큰의 상태를 EXPIRED 로 변경
-     * */
     @Transactional
     @Override
     public void updateActiveTokenToExpired(LocalDateTime time) {
-        queueRepository.updateActiveTokenToExpired(time);
+        Set<ActiveQueue> tokens = queueRepository.getActiveTokens();
+        if (tokens.isEmpty()) {
+            return;
+        }
+
+        tokens.forEach(token -> {
+            if (token.isExpired(time)) {
+                queueRepository.removeActiveQueue(token.makeActiveKey());
+            }
+        });
     }
 
     @Transactional
     @Override
     public Queue getInfo(Long memberId) {
-        List<Queue> queueList = queueRepository.findFirstWaitMember(QueueStatus.WAIT,PageRequest.of(0, 1));
-        Queue myQueue = queueRepository.findActiveTokenByMemberId(memberId, QueueStatus.ACTIVE)
-                .orElseThrow(() -> new CustomException(ErrorEnum.TOKEN_EXPIRED));
+        boolean inWait = queueRepository.isInWaitingTokens(memberId);
+        if (!inWait) {
+            throw new CustomException(ErrorEnum.NO_WAIT_TOKEN);
+        }
 
-        Long position = myQueue.calculatePosition(queueList);
-        myQueue.updatePosition(position);
-        return myQueue;
+        Long position = queueRepository.getPosition(memberId);
+
+        return new Queue(memberId, position);
     }
 
-    /**
-     * 동시 접속 가능한 인원은 10명 이라고 가정
-     * */
     @Transactional
     @Override
     public void updateWaitTokenToActive(LocalDateTime now, int available) {
-        int count = queueRepository.countActiveMember(QueueStatus.ACTIVE);
-
-        if (count == available) {
-            throw new CustomException(ErrorEnum.NO_MORE_ACTIVE_TOKEN);
+        Set<String> tokens = queueRepository.getWaitTokens(available);
+        if (tokens.isEmpty()) {
+            return;
         }
 
-        queueRepository.findWaitMemberList(QueueStatus.WAIT, PageRequest.of(0, available - count)).stream()
-                .forEach(queue -> {
-                    queue.updateStatus(QueueStatus.ACTIVE);
-                    queue.updateExpiredAt(now.plusMinutes(5));
-                });
-    }
+        // TODO : plus 5 로 수정 필요
+        LocalDateTime expiredAt = LocalDateTime.now().plusMinutes(1);
+        Set<String> activeMembers = tokens.stream()
+                .map(memberId -> memberId + ":" + expiredAt.toEpochSecond(ZoneOffset.UTC))
+                .collect(Collectors.toSet());
 
-    @Transactional
-    @Override
-    public void expiredToken(Long memberId, QueueStatus status) {
-        Queue token = queueRepository.findActiveTokenByMemberId(memberId, QueueStatus.ACTIVE)
-                .orElseThrow(() -> new CustomException(ErrorEnum.TOKEN_EXPIRED));
-        token.updateStatus(status);
+        queueRepository.removeWaitQueues(tokens);
+        queueRepository.addActiveQueues(activeMembers);
     }
 }

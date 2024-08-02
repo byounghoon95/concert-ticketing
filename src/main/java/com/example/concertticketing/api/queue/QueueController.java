@@ -2,7 +2,6 @@ package com.example.concertticketing.api.queue;
 
 import com.example.concertticketing.api.queue.dto.QueueRequest;
 import com.example.concertticketing.api.queue.dto.QueueResponse;
-import com.example.concertticketing.domain.queue.model.QueueInfo;
 import com.example.concertticketing.domain.queue.service.QueueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
