@@ -10,4 +10,5 @@ public interface QueueService {
     void updateActiveTokenToExpired(LocalDateTime time);
     Queue getInfo(Long memberId);
     void updateWaitTokenToActive(LocalDateTime time, int available);
+    void expiredToken(Long memberId);
 }

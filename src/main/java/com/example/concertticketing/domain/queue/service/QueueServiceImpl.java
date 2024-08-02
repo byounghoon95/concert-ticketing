@@ -97,4 +97,19 @@ public class QueueServiceImpl implements QueueService {
         queueRepository.removeWaitQueues(tokens);
         queueRepository.addActiveQueues(activeMembers);
     }
+
+    @Override
+    public void expiredToken(Long memberId) {
+        Set<ActiveQueue> tokens = queueRepository.getActiveTokens();
+        if (tokens.isEmpty()) {
+            return;
+        }
+
+        for (ActiveQueue token : tokens) {
+            if (token.compareTokenKey(memberId)) {
+                queueRepository.removeActiveQueue(token.makeActiveKey());
+                return;
+            }
+        }
+    }
 }
