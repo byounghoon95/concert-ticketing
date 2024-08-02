@@ -1,4 +1,4 @@
-package com.example.concertticketing.api.common;
+package com.example.concertticketing;
 
 import com.example.concertticketing.domain.concert.model.Concert;
 import com.example.concertticketing.domain.concert.model.ConcertDetail;
@@ -10,12 +10,9 @@ import com.example.concertticketing.domain.member.repository.MemberRepository;
 import com.example.concertticketing.domain.pay.repository.PayRepository;
 import com.example.concertticketing.domain.queue.repository.QueueRepository;
 import com.example.concertticketing.domain.reservation.repository.ReservationRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -24,40 +21,31 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/api/setup")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SetupController {
 
-    private final ConcertRepository concertRepository;
-    private final QueueRepository queueRepository;
+    @Autowired
+    private ConcertRepository concertRepository;
+    @Autowired
+    private QueueRepository queueRepository;
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private SeatRepository seatRepository;
+    @Autowired
+    private ReservationRepository reservationRepository;
+    @Autowired
+    private PayRepository payRepository;
 
-    private final MemberRepository memberRepository;
-
-    private final SeatRepository seatRepository;
-
-    private final ReservationRepository reservationRepository;
-
-    private final PayRepository payRepository;
-
-    @Transactional
-    @GetMapping("/1")
-    public ResponseEntity<String> setUp() {
+    @Test
+    void setUpDB() {
         setUpMember();
         setUpConcert();
         setUpSeat();
-        return ResponseEntity.ok("완료");
     }
 
-    @Transactional
-    @GetMapping("/2")
-    public ResponseEntity<String> setUp2() {
-        setUpSeat();
-        return ResponseEntity.ok("완료");
-    }
-
-    @GetMapping("/queue")
-    public ResponseEntity<String> setUpQueue() {
+    @Test
+    void setUpRedis() {
         Set<String> values = new HashSet<>();
         for (int i = 1; i <= 20000; i++) {
             String value = i + ":" + LocalDateTime.now().plusMinutes(1).toEpochSecond(ZoneOffset.UTC);
@@ -65,7 +53,6 @@ public class SetupController {
         }
 
         queueRepository.addActiveQueues(values);
-        return ResponseEntity.ok("완료");
     }
 
     private void setUpMember() {
