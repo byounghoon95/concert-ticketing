@@ -16,7 +16,9 @@ import java.time.LocalDateTime;
 @Getter
 @Where(clause = "DELETED_AT IS NULL")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "RESERVATION")
+@Table(name = "RESERVATION", indexes = {
+        @Index(name = "idx_seat_id", columnList = "seat_id")
+})
 @Entity
 public class Reservation extends BaseEntity {
     @Id
