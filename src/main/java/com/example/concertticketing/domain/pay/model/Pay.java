@@ -12,7 +12,9 @@ import org.hibernate.annotations.Where;
 @Getter
 @Where(clause = "DELETED_AT IS NULL")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "PAY")
+@Table(name = "PAY", indexes = {
+        @Index(name = "idx_reservation_id", columnList = "reservation_id")
+})
 @Entity
 public class Pay extends BaseEntity {
     @Id
