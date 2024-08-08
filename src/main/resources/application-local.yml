@@ -26,4 +26,9 @@ logging:
           jdbc:
             bind: info
 
+slack:
+  token: 토큰
+  channel: '#spring'
+server:
+  port: 8080
 
