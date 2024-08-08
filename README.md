@@ -43,3 +43,6 @@ https://github.com/users/byounghoon95/projects/7
 
 # Redis 캐싱 적용하기
 ### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/cache.md)
+
+# 인덱스 적용하기
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/index.md)
