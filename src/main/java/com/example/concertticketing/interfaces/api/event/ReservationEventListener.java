@@ -1,5 +1,6 @@
-package com.example.concertticketing.domain.reservation.event;
+package com.example.concertticketing.interfaces.api.event;
 
+import com.example.concertticketing.domain.reservation.event.ReservationEvent;
 import com.example.concertticketing.util.SlackClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
