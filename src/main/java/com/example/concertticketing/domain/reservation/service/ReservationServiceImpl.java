@@ -2,8 +2,8 @@ package com.example.concertticketing.domain.reservation.service;
 
 import com.example.concertticketing.domain.concert.model.Seat;
 import com.example.concertticketing.domain.concert.repository.SeatRepository;
-import com.example.concertticketing.domain.exception.CustomException;
-import com.example.concertticketing.domain.exception.ErrorEnum;
+import com.example.concertticketing.exception.CustomException;
+import com.example.concertticketing.exception.ErrorEnum;
 import com.example.concertticketing.domain.reservation.event.ReservationEvent;
 import com.example.concertticketing.domain.reservation.model.Reservation;
 import com.example.concertticketing.domain.reservation.repository.ReservationRepository;

@@ -1,4 +1,4 @@
-package com.example.concertticketing.domain.util;
+package com.example.concertticketing.util;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

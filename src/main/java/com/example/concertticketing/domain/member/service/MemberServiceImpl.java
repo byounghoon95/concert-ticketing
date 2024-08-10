@@ -1,8 +1,8 @@
 package com.example.concertticketing.domain.member.service;
 
 import com.example.concertticketing.interfaces.api.member.dto.MemberChargeRequest;
-import com.example.concertticketing.domain.exception.CustomException;
-import com.example.concertticketing.domain.exception.ErrorEnum;
+import com.example.concertticketing.exception.CustomException;
+import com.example.concertticketing.exception.ErrorEnum;
 import com.example.concertticketing.domain.member.model.Member;
 import com.example.concertticketing.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

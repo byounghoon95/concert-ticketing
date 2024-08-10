@@ -1,7 +1,7 @@
 package com.example.concertticketing.interfaces.interceptor;
 
-import com.example.concertticketing.domain.exception.CustomException;
-import com.example.concertticketing.domain.exception.ErrorEnum;
+import com.example.concertticketing.exception.CustomException;
+import com.example.concertticketing.exception.ErrorEnum;
 import com.example.concertticketing.domain.queue.service.QueueService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

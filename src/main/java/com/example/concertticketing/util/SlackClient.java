@@ -1,7 +1,7 @@
-package com.example.concertticketing.domain.util;
+package com.example.concertticketing.util;
 
-import com.example.concertticketing.domain.exception.CustomException;
-import com.example.concertticketing.domain.exception.ErrorEnum;
+import com.example.concertticketing.exception.CustomException;
+import com.example.concertticketing.exception.ErrorEnum;
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;

@@ -1,8 +1,8 @@
 package com.example.concertticketing.domain.member.model;
 
 import com.example.concertticketing.domain.common.entity.BaseEntity;
-import com.example.concertticketing.domain.exception.CustomException;
-import com.example.concertticketing.domain.exception.ErrorEnum;
+import com.example.concertticketing.exception.CustomException;
+import com.example.concertticketing.exception.ErrorEnum;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

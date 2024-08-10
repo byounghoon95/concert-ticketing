@@ -4,7 +4,7 @@ import com.example.concertticketing.CommonControllerIntegrateTest;
 import com.example.concertticketing.interfaces.api.common.response.CommonResponse;
 import com.example.concertticketing.interfaces.api.queue.dto.QueueRequest;
 import com.example.concertticketing.interfaces.api.queue.dto.QueueResponse;
-import com.example.concertticketing.domain.exception.ErrorEnum;
+import com.example.concertticketing.exception.ErrorEnum;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.example.concertticketing.domain.queue.component;
+package com.example.concertticketing.interfaces.scheduler;
 
 import com.example.concertticketing.domain.queue.service.QueueService;
 import lombok.RequiredArgsConstructor;

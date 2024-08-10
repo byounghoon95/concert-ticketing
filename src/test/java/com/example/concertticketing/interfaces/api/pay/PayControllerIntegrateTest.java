@@ -5,7 +5,7 @@ import com.example.concertticketing.interfaces.api.common.response.CommonRespons
 import com.example.concertticketing.interfaces.api.pay.dto.PayRequest;
 import com.example.concertticketing.interfaces.api.pay.dto.PayResponse;
 import com.example.concertticketing.domain.concert.model.Seat;
-import com.example.concertticketing.domain.exception.ErrorEnum;
+import com.example.concertticketing.exception.ErrorEnum;
 import com.example.concertticketing.domain.member.model.Member;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;

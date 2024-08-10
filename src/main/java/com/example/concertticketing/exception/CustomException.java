@@ -1,4 +1,4 @@
-package com.example.concertticketing.domain.exception;
+package com.example.concertticketing.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

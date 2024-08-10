@@ -1,7 +1,7 @@
-package com.example.concertticketing.domain.exception;
+package com.example.concertticketing.exception;
 
 import com.example.concertticketing.interfaces.api.common.response.CommonResponse;
-import com.example.concertticketing.domain.util.SlackClient;
+import com.example.concertticketing.util.SlackClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

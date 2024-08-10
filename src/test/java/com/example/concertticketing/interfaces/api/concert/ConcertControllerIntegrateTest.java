@@ -6,7 +6,7 @@ import com.example.concertticketing.domain.concert.model.ConcertDate;
 import com.example.concertticketing.domain.concert.model.ConcertDateDetails;
 import com.example.concertticketing.domain.concert.model.ConcertSeat;
 import com.example.concertticketing.domain.concert.model.ConcertSeatDetail;
-import com.example.concertticketing.domain.exception.ErrorEnum;
+import com.example.concertticketing.exception.ErrorEnum;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

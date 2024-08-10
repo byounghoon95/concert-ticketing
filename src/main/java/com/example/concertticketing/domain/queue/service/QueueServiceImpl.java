@@ -1,7 +1,7 @@
 package com.example.concertticketing.domain.queue.service;
 
-import com.example.concertticketing.domain.exception.CustomException;
-import com.example.concertticketing.domain.exception.ErrorEnum;
+import com.example.concertticketing.exception.CustomException;
+import com.example.concertticketing.exception.ErrorEnum;
 import com.example.concertticketing.domain.queue.model.ActiveQueue;
 import com.example.concertticketing.domain.queue.model.Queue;
 import com.example.concertticketing.domain.queue.repository.QueueRepository;

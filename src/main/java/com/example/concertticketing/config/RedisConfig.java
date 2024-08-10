@@ -1,4 +1,4 @@
-package com.example.concertticketing.domain.config;
+package com.example.concertticketing.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

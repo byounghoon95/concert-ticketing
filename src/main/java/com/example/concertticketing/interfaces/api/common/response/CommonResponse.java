@@ -1,6 +1,6 @@
 package com.example.concertticketing.interfaces.api.common.response;
 
-import com.example.concertticketing.domain.exception.ErrorEnum;
+import com.example.concertticketing.exception.ErrorEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

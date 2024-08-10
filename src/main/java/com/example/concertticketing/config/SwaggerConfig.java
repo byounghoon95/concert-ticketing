@@ -1,4 +1,4 @@
-package com.example.concertticketing.domain.config;
+package com.example.concertticketing.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

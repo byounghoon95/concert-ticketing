@@ -1,6 +1,6 @@
 package com.example.concertticketing.domain.pay.event;
 
-import com.example.concertticketing.domain.util.SlackClient;
+import com.example.concertticketing.util.SlackClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
