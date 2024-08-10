@@ -1,6 +1,6 @@
 package com.example.concertticketing.domain.pay;
 
-import com.example.concertticketing.api.pay.dto.PayRequest;
+import com.example.concertticketing.interfaces.api.pay.dto.PayRequest;
 import com.example.concertticketing.domain.concert.service.SeatServiceImpl;
 import com.example.concertticketing.domain.member.service.MemberServiceImpl;
 import com.example.concertticketing.domain.pay.model.Pay;

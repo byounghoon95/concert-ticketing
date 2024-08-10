@@ -1,10 +1,10 @@
 package com.example.concertticketing;
 
-import com.example.concertticketing.api.concert.ConcertController;
-import com.example.concertticketing.api.member.MemberController;
-import com.example.concertticketing.api.pay.PayController;
-import com.example.concertticketing.api.queue.QueueController;
-import com.example.concertticketing.api.reservation.ReservationController;
+import com.example.concertticketing.interfaces.api.concert.ConcertController;
+import com.example.concertticketing.interfaces.api.member.MemberController;
+import com.example.concertticketing.interfaces.api.pay.PayController;
+import com.example.concertticketing.interfaces.api.queue.QueueController;
+import com.example.concertticketing.interfaces.api.reservation.ReservationController;
 import com.example.concertticketing.domain.concert.service.ConcertServiceImpl;
 import com.example.concertticketing.domain.member.service.MemberServiceImpl;
 import com.example.concertticketing.domain.pay.service.PayServiceImpl;

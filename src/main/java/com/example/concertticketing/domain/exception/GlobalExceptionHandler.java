@@ -1,6 +1,6 @@
 package com.example.concertticketing.domain.exception;
 
-import com.example.concertticketing.api.common.response.CommonResponse;
+import com.example.concertticketing.interfaces.api.common.response.CommonResponse;
 import com.example.concertticketing.domain.util.SlackClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
