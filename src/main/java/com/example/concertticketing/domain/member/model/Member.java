@@ -14,7 +14,7 @@ import org.hibernate.annotations.Where;
 @Where(clause = "DELETED_AT IS NULL")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "MEMBER", indexes = {
-        @Index(name = "idx_memberLoginId", columnList = "memberLoginId")
+        @Index(name = "idx_memberLogin_id", columnList = "memberLoginId")
 })
 @Entity
 public class Member extends BaseEntity {
