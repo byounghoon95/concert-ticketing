@@ -1,10 +1,12 @@
-package com.example.concertticketing.domain.pay.event;
+package com.example.concertticketing.domain.pay.infrastructure.event;
 
+import com.example.concertticketing.domain.pay.event.PayEventPublisher;
+import com.example.concertticketing.domain.pay.event.PaySendEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("PaySpringEventPublisher")
 @RequiredArgsConstructor
 public class PaySpringEventPublisher implements PayEventPublisher {
 
