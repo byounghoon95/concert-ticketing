@@ -1,6 +1,7 @@
 package com.example.concertticketing.domain.reservation.application;
 
 import com.example.concertticketing.domain.concert.model.Seat;
+import com.example.concertticketing.domain.concert.model.SeatCompensation;
 import com.example.concertticketing.domain.concert.service.SeatService;
 import com.example.concertticketing.domain.reservation.model.Reservation;
 import com.example.concertticketing.domain.reservation.service.ReservationService;
@@ -19,6 +20,7 @@ public class ReservationFacade {
 
     public Reservation reserveSeat(Long seatId, Long memberId) {
         Seat seat = seatService.selectSeatWithLock(seatId);
+        SeatCompensation seatComp = SeatCompensation.from(seat);
 
         // 5분동안 임시저장
         LocalDateTime reservedAt = seat.getReservedAt();
@@ -26,7 +28,7 @@ public class ReservationFacade {
 
         seatService.reserveSeat(seatId, LocalDateTime.now(), memberId);
 
-        return reservationService.reserveSeat(seatId, memberId);
+        return reservationService.reserveSeat(seatId, memberId, seatComp);
     }
 
     public Reservation findById(Long reservationId) {

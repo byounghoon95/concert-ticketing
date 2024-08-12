@@ -1,6 +1,7 @@
 package com.example.concertticketing.domain.reservation.service;
 
 import com.example.concertticketing.domain.concert.model.Seat;
+import com.example.concertticketing.domain.concert.model.SeatCompensation;
 import com.example.concertticketing.domain.concert.repository.SeatRepository;
 import com.example.concertticketing.domain.reservation.event.ReservationEvent;
 import com.example.concertticketing.domain.reservation.model.Reservation;
@@ -23,13 +24,13 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Transactional
     @Override
-    public Reservation reserveSeat(Long seatId, Long memberId) {
+    public Reservation reserveSeat(Long seatId, Long memberId, SeatCompensation seatComp) {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
 
         Reservation reservation = Reservation.createReservation(seat, memberId);
 
-        eventPublisher.publishEvent(ReservationEvent.from(reservation));
+        eventPublisher.publishEvent(ReservationEvent.from(reservation,seatComp));
 
         return reservationRepository.reserveSeat(reservation);
     }
