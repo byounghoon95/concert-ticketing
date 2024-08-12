@@ -6,6 +6,7 @@ import com.example.concertticketing.util.SlackClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -17,8 +18,10 @@ public class ReservationKafkaEventConsumer {
     private final SlackClient slackClient;
 
     @KafkaListener(topics = "reserve", groupId = "group_1")
-    public void consume(String payload) {
+    public void consume(String payload, Acknowledgment acknowledgment) {
         ReservationEvent event = jsonConverter.fromJson(payload, ReservationEvent.class);
         slackClient.sendMessage(event.payload());
+
+        acknowledgment.acknowledge();
     }
 }
