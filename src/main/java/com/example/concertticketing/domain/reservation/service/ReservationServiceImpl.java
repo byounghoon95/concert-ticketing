@@ -30,9 +30,11 @@ public class ReservationServiceImpl implements ReservationService {
 
         Reservation reservation = Reservation.createReservation(seat, memberId);
 
-        eventPublisher.publishEvent(ReservationEvent.from(reservation,seatComp));
+        Reservation savedReservation = reservationRepository.reserveSeat(reservation);
 
-        return reservationRepository.reserveSeat(reservation);
+        eventPublisher.publishEvent(ReservationEvent.from(savedReservation,seatComp));
+
+        return savedReservation;
     }
 
     @Override

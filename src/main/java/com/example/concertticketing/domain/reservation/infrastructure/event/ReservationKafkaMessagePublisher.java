@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component("ReservationKafkaEventPublisher")
 @RequiredArgsConstructor
-public class ReservationKafkaEventPublisher implements ReservationEventPublisher {
+public class ReservationKafkaMessagePublisher implements ReservationEventPublisher {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private static final String TOPIC = "reserve";

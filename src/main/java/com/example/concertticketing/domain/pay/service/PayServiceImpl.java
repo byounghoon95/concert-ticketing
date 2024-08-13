@@ -8,8 +8,6 @@ import com.example.concertticketing.domain.pay.repository.PayRepository;
 import com.example.concertticketing.domain.queue.service.QueueService;
 import com.example.concertticketing.domain.reservation.model.Reservation;
 import com.example.concertticketing.domain.reservation.service.ReservationService;
-import com.example.concertticketing.exception.CustomException;
-import com.example.concertticketing.exception.ErrorEnum;
 import com.example.concertticketing.interfaces.api.pay.dto.PayRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -42,8 +40,10 @@ public class PayServiceImpl implements PayService {
         seatService.updateReservedAt(request.seatId(), LocalDateTime.of(9999, 12, 31, 23, 59, 59));
         queueService.expireActiveToken(request.memberId());
 
-        eventPublisher.publishEvent(PaySendEvent.from(pay));
+        Pay savedPay = payRepository.pay(pay);
 
-        return payRepository.pay(pay);
+        eventPublisher.publishEvent(PaySendEvent.from(savedPay));
+
+        return savedPay;
     }
 }

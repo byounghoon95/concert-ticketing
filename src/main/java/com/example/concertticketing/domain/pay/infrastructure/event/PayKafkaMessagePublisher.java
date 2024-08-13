@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component("PayKafkaEventPublisher")
 @RequiredArgsConstructor
-public class PayKafkaEventPublisher implements PayEventPublisher {
+public class PayKafkaMessagePublisher implements PayEventPublisher {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private static final String TOPIC = "pay";
