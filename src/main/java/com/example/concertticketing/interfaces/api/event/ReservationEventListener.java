@@ -19,7 +19,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class ReservationEventListener {
 
-    @Qualifier("ReservationKafkaEventPublisher")
+    @Qualifier("ReservationKafkaMessagePublisher")
     private final ReservationEventPublisher eventPublisher;
     private final SeatService seatService;
     @Qualifier("ReservationOutboxService")

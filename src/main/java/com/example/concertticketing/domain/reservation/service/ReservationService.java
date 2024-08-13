@@ -8,4 +8,6 @@ public interface ReservationService {
     Reservation reserveSeat(Long seatId, Long memberId, SeatCompensation seat);
 
     Reservation findById(Long reservationId);
+
+    void republish();
 }

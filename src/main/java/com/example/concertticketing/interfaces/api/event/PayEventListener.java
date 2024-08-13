@@ -16,7 +16,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class PayEventListener {
 
-    @Qualifier("PayKafkaEventPublisher")
+    @Qualifier("PayKafkaMessagePublisher")
     private final PayEventPublisher eventPublisher;
     @Qualifier("PayOutboxService")
     private final OutboxService outboxService;

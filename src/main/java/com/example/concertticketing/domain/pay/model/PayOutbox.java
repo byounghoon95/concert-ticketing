@@ -1,17 +1,22 @@
 package com.example.concertticketing.domain.pay.model;
 
+import com.example.concertticketing.domain.common.entity.BaseEntity;
 import com.example.concertticketing.domain.message.model.OutboxStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
+
+import java.time.LocalDateTime;
 
 @Getter
+@Where(clause = "DELETED_AT IS NULL")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "PAY_OUTBOX")
 @Entity
-public class PayOutbox {
+public class PayOutbox extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,5 +40,17 @@ public class PayOutbox {
 
     public void published() {
         this.status = OutboxStatus.PUBLISHED;
+    }
+
+    public boolean isPublished() {
+        if (status == OutboxStatus.INIT && createdAt.isBefore(LocalDateTime.now().minusMinutes(5))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
     }
 }

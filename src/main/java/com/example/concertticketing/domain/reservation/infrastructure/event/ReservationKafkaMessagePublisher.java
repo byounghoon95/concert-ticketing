@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-@Component("ReservationKafkaEventPublisher")
+@Component("ReservationKafkaMessagePublisher")
 @RequiredArgsConstructor
 public class ReservationKafkaMessagePublisher implements ReservationEventPublisher {
 

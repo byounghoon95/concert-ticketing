@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-@Component("PayKafkaEventPublisher")
+@Component("PayKafkaMessagePublisher")
 @RequiredArgsConstructor
 public class PayKafkaMessagePublisher implements PayEventPublisher {
 
