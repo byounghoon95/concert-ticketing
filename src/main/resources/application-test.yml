@@ -27,7 +27,7 @@ spring:
       auto-offset-reset: earliest
       bootstrap-servers: localhost:9092
       enable-auto-commit: false
-      group-id: group_1
+      group-id: test-group
     listener:
       ack-mode: manual
 
