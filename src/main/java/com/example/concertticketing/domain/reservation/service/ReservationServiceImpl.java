@@ -56,7 +56,7 @@ public class ReservationServiceImpl implements ReservationService {
         outboxRepository.findAllByStatus(OutboxStatus.INIT).forEach(value -> {
             ReservationOutbox outbox = (ReservationOutbox) value;
             if (!outbox.isPublished()) {
-                outbox.delete();
+                outbox.published();
                 eventPublisher.publishEvent(jsonConverter.fromJson(outbox.getPayload(), ReservationEvent.class));
             }
         });

@@ -4,11 +4,12 @@ import com.example.concertticketing.domain.concert.service.SeatService;
 import com.example.concertticketing.domain.member.service.MemberService;
 import com.example.concertticketing.domain.message.model.OutboxStatus;
 import com.example.concertticketing.domain.message.repository.OutboxRepository;
-import com.example.concertticketing.domain.pay.event.PaySendEvent;
+import com.example.concertticketing.domain.pay.event.PayMessageEvent;
 import com.example.concertticketing.domain.pay.model.Pay;
 import com.example.concertticketing.domain.pay.model.PayOutbox;
 import com.example.concertticketing.domain.pay.repository.PayRepository;
 import com.example.concertticketing.domain.queue.service.QueueService;
+import com.example.concertticketing.domain.reservation.event.ReservationEvent;
 import com.example.concertticketing.domain.reservation.model.Reservation;
 import com.example.concertticketing.domain.reservation.service.ReservationService;
 import com.example.concertticketing.interfaces.api.pay.dto.PayRequest;
@@ -50,7 +51,7 @@ public class PayServiceImpl implements PayService {
 
         Pay savedPay = payRepository.pay(pay);
 
-        eventPublisher.publishEvent(PaySendEvent.from(savedPay));
+        eventPublisher.publishEvent(PayMessageEvent.from(savedPay));
 
         return savedPay;
     }
@@ -61,8 +62,8 @@ public class PayServiceImpl implements PayService {
         outboxRepository.findAllByStatus(OutboxStatus.INIT).forEach(value -> {
             PayOutbox outbox = (PayOutbox) value;
             if (!outbox.isPublished()) {
-                outbox.delete();
-                eventPublisher.publishEvent(jsonConverter.fromJson(outbox.getPayload(), PaySendEvent.class));
+                outbox.published();
+                eventPublisher.publishEvent(jsonConverter.fromJson(outbox.getPayload(), ReservationEvent.class));
             }
         });
     }

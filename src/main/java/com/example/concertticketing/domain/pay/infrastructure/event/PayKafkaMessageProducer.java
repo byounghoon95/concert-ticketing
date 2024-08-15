@@ -1,22 +1,22 @@
 package com.example.concertticketing.domain.pay.infrastructure.event;
 
 import com.example.concertticketing.domain.pay.event.PayEventPublisher;
-import com.example.concertticketing.domain.pay.event.PaySendEvent;
+import com.example.concertticketing.domain.pay.event.PayMessageEvent;
 import com.example.concertticketing.util.JsonConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-@Component("PayKafkaMessagePublisher")
+@Component("PayKafkaMessageProducer")
 @RequiredArgsConstructor
-public class PayKafkaMessagePublisher implements PayEventPublisher {
+public class PayKafkaMessageProducer implements PayEventPublisher {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
-    private static final String TOPIC = "pay";
+    private static final String TOPIC = "pay-message";
     private final JsonConverter jsonConverter;
 
     @Override
-    public void publish(PaySendEvent event) {
+    public void publish(PayMessageEvent event) {
         String json = jsonConverter.toJson(event);
         kafkaTemplate.send(TOPIC, json);
     }

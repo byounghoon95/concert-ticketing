@@ -7,12 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-@Component("ReservationKafkaMessagePublisher")
+@Component("ReservationKafkaMessageProducer")
 @RequiredArgsConstructor
-public class ReservationKafkaMessagePublisher implements ReservationEventPublisher {
+public class ReservationKafkaMessageProducer implements ReservationEventPublisher {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
-    private static final String TOPIC = "reserve";
+    private static final String TOPIC = "reserve-message";
     private final JsonConverter jsonConverter;
 
     @Override

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service("PayOutboxService")
 @RequiredArgsConstructor
 public class PayOutboxServiceImpl implements OutboxService {
@@ -22,9 +24,13 @@ public class PayOutboxServiceImpl implements OutboxService {
         outboxRepository.save(dto);
     }
 
+    /**
+     * 마킹을 하고 찾기에 List 로 반환될 일 없음
+     * 하지만, 로직이 꼬여 중복으로 값이 들어갈 경우를 막기 위함
+     * */
     @Override
     public void published(Long eventId) {
-        PayOutbox outbox = (PayOutbox) outboxRepository.findByEventId(eventId);
-        outbox.published();
+        List<PayOutbox> list = outboxRepository.findInitList(eventId);
+        list.forEach(outbox -> outbox.published());
     }
 }

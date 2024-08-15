@@ -5,8 +5,6 @@ import com.example.concertticketing.domain.message.model.OutboxStatus;
 import com.example.concertticketing.domain.message.repository.OutboxRepository;
 import com.example.concertticketing.domain.pay.infrastructure.PayOutboxJpaRepository;
 import com.example.concertticketing.domain.pay.model.PayOutbox;
-import com.example.concertticketing.exception.CustomException;
-import com.example.concertticketing.exception.ErrorEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -24,13 +22,22 @@ public class PayOutboxRepositoryImpl implements OutboxRepository {
     }
 
     @Override
-    public PayOutbox findByEventId(Long eventId) {
-        return outboxJpaRepository.findByEventId(eventId)
-                .orElseThrow(() -> new CustomException(ErrorEnum.NO_OUTBOX));
+    public List<PayOutbox> findAllByStatus(OutboxStatus status) {
+        return outboxJpaRepository.findAllByStatus(status);
     }
 
     @Override
-    public List<PayOutbox> findAllByStatus(OutboxStatus status) {
-        return outboxJpaRepository.findAllByStatus(status);
+    public void deleteAllInBatch() {
+        outboxJpaRepository.deleteAllInBatch();
+    }
+
+    @Override
+    public List<PayOutbox> findAll() {
+        return outboxJpaRepository.findAll();
+    }
+
+    @Override
+    public List<PayOutbox> findInitList(Long eventId) {
+        return outboxJpaRepository.findAllByEventIdAndStatus(eventId,OutboxStatus.INIT);
     }
 }

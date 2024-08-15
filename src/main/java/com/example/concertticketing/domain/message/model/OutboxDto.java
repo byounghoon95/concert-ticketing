@@ -4,6 +4,8 @@ import com.example.concertticketing.domain.pay.model.PayOutbox;
 import com.example.concertticketing.domain.reservation.model.ReservationOutbox;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
+
 public class OutboxDto {
 
     private Long eventId;
@@ -20,6 +22,7 @@ public class OutboxDto {
                 .eventId(eventId)
                 .payload(payload)
                 .status(OutboxStatus.INIT)
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 
@@ -28,6 +31,7 @@ public class OutboxDto {
                 .eventId(eventId)
                 .payload(payload)
                 .status(OutboxStatus.INIT)
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 }

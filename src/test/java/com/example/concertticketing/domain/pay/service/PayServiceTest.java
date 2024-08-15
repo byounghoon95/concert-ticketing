@@ -1,15 +1,14 @@
-package com.example.concertticketing.domain.pay;
+package com.example.concertticketing.domain.pay.service;
 
-import com.example.concertticketing.interfaces.api.pay.dto.PayRequest;
 import com.example.concertticketing.domain.concert.service.SeatServiceImpl;
 import com.example.concertticketing.domain.member.service.MemberServiceImpl;
 import com.example.concertticketing.domain.pay.model.Pay;
 import com.example.concertticketing.domain.pay.model.PayStatus;
 import com.example.concertticketing.domain.pay.repository.PayRepository;
-import com.example.concertticketing.domain.pay.service.PayServiceImpl;
 import com.example.concertticketing.domain.queue.service.QueueServiceImpl;
 import com.example.concertticketing.domain.reservation.model.Reservation;
 import com.example.concertticketing.domain.reservation.service.ReservationServiceImpl;
+import com.example.concertticketing.interfaces.api.pay.dto.PayRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

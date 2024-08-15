@@ -5,9 +5,8 @@ import com.example.concertticketing.domain.reservation.model.ReservationOutbox;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ReservationOutboxJpaRepository extends JpaRepository<ReservationOutbox,Long> {
-    Optional<ReservationOutbox> findByEventId(Long eventId);
     List<ReservationOutbox> findAllByStatus(OutboxStatus status);
+    List<ReservationOutbox> findAllByEventIdAndStatus(Long eventId, OutboxStatus status);
 }

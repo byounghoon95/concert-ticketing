@@ -5,8 +5,6 @@ import com.example.concertticketing.domain.message.model.OutboxStatus;
 import com.example.concertticketing.domain.message.repository.OutboxRepository;
 import com.example.concertticketing.domain.reservation.infrastructure.ReservationOutboxJpaRepository;
 import com.example.concertticketing.domain.reservation.model.ReservationOutbox;
-import com.example.concertticketing.exception.CustomException;
-import com.example.concertticketing.exception.ErrorEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -24,13 +22,22 @@ public class ReservationOutboxRepositoryImpl implements OutboxRepository {
     }
 
     @Override
-    public ReservationOutbox findByEventId(Long eventId) {
-        return outboxJpaRepository.findByEventId(eventId)
-                .orElseThrow(() -> new CustomException(ErrorEnum.NO_OUTBOX));
+    public List<ReservationOutbox> findAllByStatus(OutboxStatus status) {
+        return outboxJpaRepository.findAllByStatus(status);
     }
 
     @Override
-    public List<ReservationOutbox> findAllByStatus(OutboxStatus status) {
-        return outboxJpaRepository.findAllByStatus(status);
+    public void deleteAllInBatch() {
+        outboxJpaRepository.deleteAllInBatch();
+    }
+
+    @Override
+    public List<ReservationOutbox> findAll() {
+        return outboxJpaRepository.findAll();
+    }
+
+    @Override
+    public List<ReservationOutbox> findInitList(Long eventId) {
+        return outboxJpaRepository.findAllByEventIdAndStatus(eventId,OutboxStatus.INIT);
     }
 }

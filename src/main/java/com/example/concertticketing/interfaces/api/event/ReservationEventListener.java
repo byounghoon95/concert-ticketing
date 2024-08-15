@@ -1,11 +1,12 @@
 package com.example.concertticketing.interfaces.api.event;
 
-import com.example.concertticketing.domain.message.model.OutboxDto;
 import com.example.concertticketing.domain.concert.service.SeatService;
+import com.example.concertticketing.domain.message.model.OutboxDto;
 import com.example.concertticketing.domain.message.service.OutboxService;
 import com.example.concertticketing.domain.reservation.event.ReservationEvent;
 import com.example.concertticketing.domain.reservation.event.ReservationEventPublisher;
 import com.example.concertticketing.util.JsonConverter;
+import com.example.concertticketing.util.SlackClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
@@ -19,17 +20,24 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class ReservationEventListener {
 
-    @Qualifier("ReservationKafkaMessagePublisher")
-    private final ReservationEventPublisher eventPublisher;
+    @Qualifier("ReservationKafkaMessageProducer")
+    private final ReservationEventPublisher messageSender;
     private final SeatService seatService;
     @Qualifier("ReservationOutboxService")
     private final OutboxService outboxService;
     private final JsonConverter jsonConverter;
+    private final SlackClient slackClient;
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void sendSlackMessage(ReservationEvent event) {
-        eventPublisher.publish(event);
+        slackClient.sendMessage(event.payload());
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void sendKafkaMessage(ReservationEvent event) {
+        messageSender.publish(event);
     }
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
