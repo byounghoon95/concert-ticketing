@@ -2,15 +2,21 @@ package com.example.concertticketing.domain.pay.service;
 
 import com.example.concertticketing.domain.concert.service.SeatService;
 import com.example.concertticketing.domain.member.service.MemberService;
-import com.example.concertticketing.domain.pay.event.PayEventPublisher;
-import com.example.concertticketing.domain.pay.event.PaySendEvent;
+import com.example.concertticketing.domain.message.model.OutboxStatus;
+import com.example.concertticketing.domain.message.repository.OutboxRepository;
+import com.example.concertticketing.domain.pay.event.PayMessageEvent;
 import com.example.concertticketing.domain.pay.model.Pay;
+import com.example.concertticketing.domain.pay.model.PayOutbox;
 import com.example.concertticketing.domain.pay.repository.PayRepository;
 import com.example.concertticketing.domain.queue.service.QueueService;
+import com.example.concertticketing.domain.reservation.event.ReservationEvent;
 import com.example.concertticketing.domain.reservation.model.Reservation;
 import com.example.concertticketing.domain.reservation.service.ReservationService;
 import com.example.concertticketing.interfaces.api.pay.dto.PayRequest;
+import com.example.concertticketing.util.JsonConverter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +31,10 @@ public class PayServiceImpl implements PayService {
     private final SeatService seatService;
     private final QueueService queueService;
     private final MemberService memberService;
-    private final PayEventPublisher eventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
+    @Qualifier("PayOutboxRepository")
+    private final OutboxRepository outboxRepository;
+    private final JsonConverter jsonConverter;
 
     @Transactional
     @Override
@@ -40,8 +49,22 @@ public class PayServiceImpl implements PayService {
         seatService.updateReservedAt(request.seatId(), LocalDateTime.of(9999, 12, 31, 23, 59, 59));
         queueService.expireActiveToken(request.memberId());
 
-        eventPublisher.publish(PaySendEvent.from(pay));
+        Pay savedPay = payRepository.pay(pay);
 
-        return payRepository.pay(pay);
+        eventPublisher.publishEvent(PayMessageEvent.from(savedPay));
+
+        return savedPay;
+    }
+
+    @Transactional
+    @Override
+    public void republish() {
+        outboxRepository.findAllByStatus(OutboxStatus.INIT).forEach(value -> {
+            PayOutbox outbox = (PayOutbox) value;
+            if (!outbox.isPublished()) {
+                outbox.published();
+                eventPublisher.publishEvent(jsonConverter.fromJson(outbox.getPayload(), ReservationEvent.class));
+            }
+        });
     }
 }

@@ -55,7 +55,7 @@ class ReservationServiceTest {
         when(seatRepository.findById(any())).thenReturn(Optional.of(seat));
         when(reservationRepository.reserveSeat(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Reservation response = reservationService.reserveSeat(seatId,memberId);
+        Reservation response = reservationService.reserveSeat(seatId,memberId,null);
 
         // then
         assertThat(response.getStatus()).isEqualTo(ReservationStatus.RESERVED);

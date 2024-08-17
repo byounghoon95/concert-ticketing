@@ -1,6 +1,7 @@
 package com.example.concertticketing.domain.concert.service;
 
 import com.example.concertticketing.domain.concert.model.Seat;
+import com.example.concertticketing.domain.concert.model.SeatCompensation;
 import com.example.concertticketing.domain.concert.repository.SeatRepository;
 import com.example.concertticketing.exception.CustomException;
 import com.example.concertticketing.exception.ErrorEnum;
@@ -30,6 +31,18 @@ public class SeatServiceImpl implements SeatService {
     public Seat selectSeatWithLock(Long seatId) {
         return seatRepository.selectSeatWithLock(seatId)
                 .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
+    }
+
+    @Override
+    public void rollbackSeat(SeatCompensation seatComp) {
+        Seat seat = seatRepository.findById(seatComp.seatId())
+                .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
+
+        Member member = (seatComp.memberId() == null) ? null : memberRepository.findById(seatComp.memberId())
+                .orElseThrow(() -> new CustomException(ErrorEnum.MEMBER_NOT_FOUND));
+
+        seat.updateReservedAt(seatComp.reservedAt());
+        seat.updateMember(member);
     }
 
     @Transactional
