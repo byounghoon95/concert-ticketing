@@ -24,11 +24,6 @@
 - 결제 처리하고 결제 내역을 생성한다
 - 결제가 완료되면 해당 좌석의 소유권을 유저에게 배정하고 대기열 토큰을 만료시킨다
 
-# MileStone
-깃허브 마일스톤으로 작성<br>
-Date fields 에서 start 와 end 설정하면 조회 가능합니다<br>
-https://github.com/users/byounghoon95/projects/7
-
 # ERD
 ![ERDv1.png](src%2Fmain%2Fresources%2Fdocs%2FERDv1.png)
 
