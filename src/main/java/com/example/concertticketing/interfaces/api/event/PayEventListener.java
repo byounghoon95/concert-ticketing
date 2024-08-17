@@ -5,7 +5,6 @@ import com.example.concertticketing.domain.message.service.OutboxService;
 import com.example.concertticketing.domain.pay.event.PayEventPublisher;
 import com.example.concertticketing.domain.pay.event.PayMessageEvent;
 import com.example.concertticketing.util.JsonConverter;
-import com.example.concertticketing.util.SlackClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
@@ -22,13 +21,6 @@ public class PayEventListener {
     @Qualifier("PayOutboxService")
     private final OutboxService outboxService;
     private final JsonConverter jsonConverter;
-    private final SlackClient slackClient;
-
-    @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void sendSlackMessage(PayMessageEvent event) {
-        slackClient.sendMessage(event.payload());
-    }
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)

@@ -3,6 +3,7 @@ package com.example.concertticketing.interfaces.consumer;
 import com.example.concertticketing.domain.message.service.OutboxService;
 import com.example.concertticketing.domain.pay.event.PayMessageEvent;
 import com.example.concertticketing.util.JsonConverter;
+import com.example.concertticketing.util.SlackClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,9 +21,19 @@ public class PayKafkaEventConsumer {
     private final JsonConverter jsonConverter;
     @Qualifier("PayOutboxService")
     private final OutboxService outboxService;
+    private final SlackClient slackClient;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @KafkaListener(topics = "pay-message", groupId = "group_1")
+    @KafkaListener(topics = "pay-message", groupId = "pay-message")
+    public void sendMessage(String payload, Acknowledgment acknowledgment) {
+        PayMessageEvent event = jsonConverter.fromJson(payload, PayMessageEvent.class);
+        slackClient.sendMessage(event.payload());
+
+        acknowledgment.acknowledge();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @KafkaListener(topics = "pay-message", groupId = "pay-outbox")
     public void consume(String payload, Acknowledgment acknowledgment) {
         PayMessageEvent event = jsonConverter.fromJson(payload, PayMessageEvent.class);
         outboxService.published(event.payId());

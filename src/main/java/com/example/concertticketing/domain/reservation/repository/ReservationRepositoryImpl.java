@@ -2,6 +2,8 @@ package com.example.concertticketing.domain.reservation.repository;
 
 import com.example.concertticketing.domain.reservation.infrastructure.ReservationJpaRepository;
 import com.example.concertticketing.domain.reservation.model.Reservation;
+import com.example.concertticketing.exception.CustomException;
+import com.example.concertticketing.exception.ErrorEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +23,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     @Override
     public Reservation findById(Long reservationId) {
         return reservationJpaRepository.findById(reservationId)
-                .orElseThrow(() -> new NullPointerException("일치하는 예약번호가 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorEnum.NO_RESERVATION));
     }
 
     @Override
