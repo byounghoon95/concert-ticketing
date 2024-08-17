@@ -26,23 +26,16 @@ public class ReservationEventListener {
     @Qualifier("ReservationOutboxService")
     private final OutboxService outboxService;
     private final JsonConverter jsonConverter;
-    private final SlackClient slackClient;
 
-    @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void sendSlackMessage(ReservationEvent event) {
-        slackClient.sendMessage(event.payload());
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    public void saveOutbox(ReservationEvent event) {
+        outboxService.save(new OutboxDto(event.reservationId(), jsonConverter.toJson(event)));
     }
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void sendKafkaMessage(ReservationEvent event) {
         messageSender.publish(event);
-    }
-
-    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    public void saveOutbox(ReservationEvent event) {
-        outboxService.save(new OutboxDto(event.reservationId(), jsonConverter.toJson(event)));
     }
 
     @Async
