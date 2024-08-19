@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SeatJpaRepository extends JpaRepository<Seat,Long> {
-    List<Seat> findByConcertIdAndReservedAtIsNullOrReservedAtBefore(@Param("concertId") Long concertDetailId, @Param("time") LocalDateTime time);
+    @Query("SELECT s FROM Seat s WHERE s.concert.id = :concertDetailId AND (s.reservedAt IS NULL OR s.reservedAt < :time)")
+    List<Seat> findAvailableSeats(@Param("concertDetailId") Long concertDetailId, @Param("time") LocalDateTime time);
 
     @Lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
     @Query("SELECT s FROM Seat s WHERE s.id = :seatId")

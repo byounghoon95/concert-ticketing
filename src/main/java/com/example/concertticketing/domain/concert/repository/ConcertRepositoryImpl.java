@@ -36,7 +36,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
 
     @Override
     public List<Seat> findAvailableSeats(Long concertDetailId, LocalDateTime time) {
-        return seatJpaRepository.findByConcertIdAndReservedAtIsNullOrReservedAtBefore(concertDetailId, time);
+        return seatJpaRepository.findAvailableSeats(concertDetailId, time);
     }
 
     @Override
