@@ -1,1 +1,1 @@
-![sequence-diagram.jpg](sequence-diagram.jpg)
+![sequence-diagram.jpg](../image/sequence-diagram.jpg)
