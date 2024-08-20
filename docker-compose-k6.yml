@@ -7,4 +7,6 @@ services:
     volumes:
       - ./scripts:/scripts
     entrypoint: ["k6", "run"]
-    command: ["--out", "influxdb=http://influxdb:8086/myk6db", "/scripts/getAvailableDates.js"]
+    command: ["--out", "influxdb=http://influxdb:8086/myk6db", "/scripts/reservation/reserveSeat.js"]
+
+# k6 run --out influxdb=http://influxdb:8086/myk6db /scripts/concert/getAvailableDates.js

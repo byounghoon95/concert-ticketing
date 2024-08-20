@@ -1,0 +1,58 @@
+spring:
+  datasource:
+    url: jdbc:mysql://host.docker.internal:3307/concert?serverTimezone=Asia/Seoul
+#    createDatabaseIfNotExist 에서 테이블 생성되지 않는 경우 사용
+#    url: jdbc:mysql://host.docker.internal:3307/concert?serverTimezone=Asia/Seoul&createDatabaseIfNotExist=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: myuser
+    password: myuser
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        use_sql_comments: true
+  cache:
+    type: redis
+  data:
+    redis:
+      host: host.docker.internal
+      port: 6379
+
+  kafka:
+    producer:
+      bootstrap-servers: kafka-1:9092
+    consumer:
+      auto-offset-reset: earliest
+      bootstrap-servers: kafka-1:9092
+      enable-auto-commit: false
+      group-id: group_1
+    listener:
+      ack-mode: manual
+
+logging:
+  level:
+    org:
+      hibernate:
+        orm:
+          jdbc:
+            bind: info
+
+# 프로메테우스
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#  endpoint:
+#    prometheus:
+#      enabled: true
+
+slack:
+  token: 토큰
+  channel: '#spring'
+
+server:
+  port: 8080
+
