@@ -44,6 +44,7 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new CustomException(ErrorEnum.MEMBER_NOT_FOUND));
     }
 
+    @Transactional
     @Override
     public void minusBalance(Long memberId, Long price) {
         Member member = memberRepository.findById(memberId)

@@ -73,7 +73,7 @@ public class Reservation extends BaseEntity {
     }
 
     public void matchMember(Long domainMemberId, Long requestMemberId) {
-        if (domainMemberId != requestMemberId) {
+        if (!domainMemberId.equals(requestMemberId)) {
             throw new CustomException(ErrorEnum.MEMBER_NOT_MATCH);
         }
     }
