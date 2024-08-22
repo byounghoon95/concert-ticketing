@@ -44,3 +44,6 @@
 
 # MSA 설계
 ### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/msa.md)
+
+# 부하테스트
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/load-test.md)
