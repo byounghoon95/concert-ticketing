@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:mysql://host.docker.internal:3307/concert?serverTimezone=Asia/Seoul
-#    createDatabaseIfNotExist 에서 테이블 생성되지 않는 경우 사용
-#    url: jdbc:mysql://host.docker.internal:3307/concert?serverTimezone=Asia/Seoul&createDatabaseIfNotExist=true
+    #    createDatabaseIfNotExist 에서 테이블 생성되지 않는 경우 사용
+    #    url: jdbc:mysql://host.docker.internal:3307/concert?serverTimezone=Asia/Seoul&createDatabaseIfNotExist=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: myuser
     password: myuser

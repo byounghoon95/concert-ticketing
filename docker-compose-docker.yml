@@ -11,6 +11,8 @@ services:
       MYSQL_PASSWORD: myuser
     ports:
       - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
 
   redis:
     image: redis:latest
@@ -87,15 +89,18 @@ services:
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-1:29092,kafka-2:29093,kafka-3:29094
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper-1:22181
 
-  spring-app:
-    image: spring-app
-    container_name: spring-app
-    ports:
-      - "8080:8080"
-    depends_on:
-      - kafka-1
-      - kafka-2
-      - kafka-3
-      - kafka-ui
-      - redis
-      - mysql
+#  spring-app:
+#    image: spring-app
+#    container_name: spring-app
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - kafka-1
+#      - kafka-2
+#      - kafka-3
+#      - kafka-ui
+#      - redis
+#      - mysql
+
+volumes:
+  mysql-data:
