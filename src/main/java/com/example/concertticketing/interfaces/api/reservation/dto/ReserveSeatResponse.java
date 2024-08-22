@@ -9,17 +9,20 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ReserveSeatResponse {
+    Long id;
     int seatNo;
     ReservationStatus status;
 
     @Builder
-    public ReserveSeatResponse(int seatNo,ReservationStatus status) {
+    public ReserveSeatResponse(Long id, int seatNo,ReservationStatus status) {
+        this.id = id;
         this.seatNo = seatNo;
         this.status = status;
     }
 
     public static ReserveSeatResponse of(Reservation reservation) {
         return ReserveSeatResponse.builder()
+                .id(reservation.getId())
                 .seatNo(reservation.getSeatNo())
                 .status(reservation.getStatus())
                 .build();
