@@ -18,7 +18,7 @@ public class ExpireScheduler {
     /**
      * 활성화된 큐를 만료
      * */
-    @Scheduled(fixedDelay = 20000) // 20초
+    @Scheduled(fixedDelay = 30000) // 30초
     public void processExpiredQueues() {
         long start = System.currentTimeMillis();
         queueService.expireActiveTokens(LocalDateTime.now());
@@ -29,10 +29,10 @@ public class ExpireScheduler {
     /**
      * 대기중인 큐를 활성화
      * */
-    @Scheduled(fixedDelay = 20000) // 20초
+    @Scheduled(fixedDelay = 30000) // 30초
     public void processActiveToken() {
         long start = System.currentTimeMillis();
-        queueService.updateWaitTokenToActive(LocalDateTime.now(), 50);
+        queueService.updateWaitTokenToActive(LocalDateTime.now(), 500);
         long end = System.currentTimeMillis();
         log.info("대기열 활성화 API 소요시간 : {} ms", (end - start));
     }
