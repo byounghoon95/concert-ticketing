@@ -46,7 +46,7 @@ public class PayServiceImpl implements PayService {
         Pay pay = Pay.createPay(reservation);
 
         memberService.minusBalance(request.memberId(), reservation.getPrice());
-        seatService.updateReservedAt(request.seatId(), LocalDateTime.of(9999, 12, 31, 23, 59, 59));
+        seatService.updateReservedAt(request.seatId(), LocalDateTime.of(9998, 12, 31, 23, 59, 59));
         queueService.expireActiveToken(request.memberId());
 
         Pay savedPay = payRepository.pay(pay);

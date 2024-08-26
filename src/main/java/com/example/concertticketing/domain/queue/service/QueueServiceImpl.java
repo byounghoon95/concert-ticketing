@@ -87,9 +87,9 @@ public class QueueServiceImpl implements QueueService {
         if (tokens.isEmpty()) {
             return;
         }
-
-        // TODO : plus 5 로 수정 필요
-        LocalDateTime expiredAt = LocalDateTime.now().plusMinutes(1);
+        
+        // active 상태 5분간 유지
+        LocalDateTime expiredAt = LocalDateTime.now().plusMinutes(5);
         Set<String> activeMembers = tokens.stream()
                 .map(memberId -> memberId + ":" + expiredAt.toEpochSecond(ZoneOffset.UTC))
                 .collect(Collectors.toSet());

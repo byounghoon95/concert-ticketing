@@ -14,17 +14,21 @@ services:
       - INFLUXDB_USER=myuser
       - INFLUXDB_PASSWORD=mypassword
 
-  grafana:
-    image: bitnami/grafana:latest
-    container_name: grafana
-    ports:
-      - "3000:3000"
+  #  prometheus:
+  #    image: prom/prometheus
+  #    container_name: prometheus
+  #    volumes:
+  #      - ./prometheus.yml:/prometheus/prometheus.yml:ro
+  #    ports:
+  #      - "9090:9090"
+  #    command:
+  #      - "--web.enable-lifecycle"
 
-  k6:
-    image: loadimpact/k6:latest
-    container_name: k6
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
     volumes:
-      - ./scripts:/scripts
-    entrypoint: [ "sleep", "infinity" ]
-#    entrypoint: ["k6", "run"]
-#    command: ["/scripts/enqueue.js"]
+      - ./grafana-volume:/var/lib/grafana
+    ports:
+      - "3200:3000"
+

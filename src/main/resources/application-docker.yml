@@ -1,6 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/concert?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://host.docker.internal:3307/concert?serverTimezone=Asia/Seoul
+    #    createDatabaseIfNotExist 에서 테이블 생성되지 않는 경우 사용
+    #    url: jdbc:mysql://host.docker.internal:3307/concert?serverTimezone=Asia/Seoul&createDatabaseIfNotExist=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: myuser
     password: myuser
@@ -15,14 +17,15 @@ spring:
     type: redis
   data:
     redis:
-      host: localhost
+      host: host.docker.internal
       port: 6379
+
   kafka:
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: kafka-1:9092
     consumer:
       auto-offset-reset: earliest
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: kafka-1:9092
       enable-auto-commit: false
       group-id: group_1
     listener:
@@ -36,9 +39,20 @@ logging:
           jdbc:
             bind: info
 
+# 프로메테우스
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#  endpoint:
+#    prometheus:
+#      enabled: true
+
 slack:
   token: 토큰
   channel: '#spring'
+
 server:
   port: 8080
 
