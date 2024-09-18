@@ -25,25 +25,25 @@
 - 결제가 완료되면 해당 좌석의 소유권을 유저에게 배정하고 대기열 토큰을 만료시킨다
 
 # ERD
-![ERDv1.png](src%2Fmain%2Fresources%2Fdocs%2FERDv1.png)
+![ERDv1.png](docs/ERDv1.png)
 
 # Sequence Diagram
-### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/sequence.md)
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/docs/sequence.md)
 
 # API 명세
-### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/api-docs.md)
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/docs/api-docs.md)
 
 # 디비 동시성 분석
-### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/lock.md)
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/docs/lock.md)
 
 # Redis 캐싱 적용하기
-### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/cache.md)
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/docs/cache.md)
 
 # 인덱스 적용하기
-### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/index.md)
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/docs/index.md)
 
 # MSA 설계
-### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/msa.md)
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/docs/msa.md)
 
 # 부하테스트
-### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/src/main/resources/docs/load-test.md)
+### [바로가기](https://github.com/byounghoon95/concert-ticketing/tree/master/docs/load-test.md)
