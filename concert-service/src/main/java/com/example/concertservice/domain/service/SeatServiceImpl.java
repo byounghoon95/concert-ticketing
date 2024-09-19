@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @Service
 public class SeatServiceImpl implements SeatService {
     private final SeatRepository seatRepository;
-//    private final MemberRepository memberRepository;
 
     @Override
     public Seat selectSeat(Long seatId) {
@@ -36,11 +35,8 @@ public class SeatServiceImpl implements SeatService {
         Seat seat = seatRepository.findById(seatComp.seatId())
                 .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
 
-//        Member member = (seatComp.memberId() == null) ? null : memberRepository.findById(seatComp.memberId())
-//                .orElseThrow(() -> new CustomException(ErrorEnum.MEMBER_NOT_FOUND));
-
         seat.updateReservedAt(seatComp.reservedAt());
-//        seat.updateMember(member);
+        seat.updateMemberId(seatComp.memberId());
     }
 
     @Transactional
@@ -55,9 +51,8 @@ public class SeatServiceImpl implements SeatService {
     public void reserveSeat(Long seatId, LocalDateTime now, Long memberId) {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
-//        Member member = memberRepository.findById(memberId)
-//                .orElseThrow(() -> new CustomException(ErrorEnum.MEMBER_NOT_FOUND));
+
         seat.updateReservedAt(now);
-//        seat.updateMember(member);
+        seat.updateMemberId(memberId);
     }
 }

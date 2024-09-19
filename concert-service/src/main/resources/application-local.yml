@@ -1,3 +1,6 @@
+member-service:
+  url: http://localhost:9092
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/concert?serverTimezone=Asia/Seoul
@@ -6,7 +9,7 @@ spring:
     password: myuser
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:

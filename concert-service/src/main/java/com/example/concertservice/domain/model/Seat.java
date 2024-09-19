@@ -22,9 +22,8 @@ public class Seat extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "MEMBER_ID", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-//    private Member member;
+    @Column(name = "MEMBER_ID")
+    private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CONCERT_DETAIL_ID", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
@@ -44,9 +43,9 @@ public class Seat extends BaseEntity {
     private Long version;
 
     @Builder
-    public Seat(Long id, ConcertDetail concert, int seatNo, Long price, LocalDateTime reservedAt) {
-//    public Seat(Long id, Member member, ConcertDetail concert, int seatNo, Long price, LocalDateTime reservedAt) {
+    public Seat(Long id, Long memberId, ConcertDetail concert, int seatNo, Long price, LocalDateTime reservedAt) {
         this.id = id;
+        this.memberId = memberId;
         this.concert = concert;
         this.seatNo = seatNo;
         this.price = price;
@@ -57,7 +56,7 @@ public class Seat extends BaseEntity {
         this.reservedAt = reservedAt;
     }
 
-//    public void updateMember(Member member) {
-//        this.member = member;
-//    }
+    public void updateMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
 }
