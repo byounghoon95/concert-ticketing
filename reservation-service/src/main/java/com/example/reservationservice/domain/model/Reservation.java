@@ -1,6 +1,7 @@
 package com.example.reservationservice.domain.model;
 
 import com.example.reservationservice.domain.common.entity.BaseEntity;
+import com.example.reservationservice.domain.external.SeatResponse;
 import com.example.reservationservice.exception.CustomException;
 import com.example.reservationservice.exception.ErrorEnum;
 import jakarta.persistence.*;
@@ -24,9 +25,8 @@ public class Reservation extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "SEAT_ID", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-//    private Seat seat;
+    @Column(name = "SEAT_ID")
+    private Long seatId;
 
     @Column(name = "CONCERT_NAME")
     private String concertName;
@@ -48,9 +48,8 @@ public class Reservation extends BaseEntity {
     private ReservationStatus status;
 
     @Builder
-    public Reservation(String concertName, Long price, int seatNo, Long memberId, LocalDateTime date, ReservationStatus status, LocalDateTime createdAt) {
-//    public Reservation(Seat seat, String concertName, Long price, int seatNo, Long memberId, LocalDateTime date, ReservationStatus status, LocalDateTime createdAt) {
-//        this.seat = seat;
+    public Reservation(Long seatId, String concertName, Long price, int seatNo, Long memberId, LocalDateTime date, ReservationStatus status, LocalDateTime createdAt) {
+        this.seatId = seatId;
         this.concertName = concertName;
         this.price = price;
         this.seatNo = seatNo;
@@ -60,13 +59,12 @@ public class Reservation extends BaseEntity {
         this.createdAt = createdAt;
     }
 
-    public static Reservation createReservation(Long memberId) {
-//    public static Reservation createReservation(Seat seat, Long memberId) {
+    public static Reservation createReservation(SeatResponse seat, Long memberId) {
         return Reservation.builder()
-//                .seat(seat)
+                .seatId(seat.getId())
 //                .concertName(seat.getConcert().getName())
-//                .price(seat.getPrice())
-//                .seatNo(seat.getSeatNo())
+                .price(seat.getPrice())
+                .seatNo(seat.getSeatNo())
                 .memberId(memberId)
 //                .date(seat.getConcert().getDate())
                 .status(ReservationStatus.RESERVED)

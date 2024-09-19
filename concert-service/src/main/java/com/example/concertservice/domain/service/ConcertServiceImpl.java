@@ -1,10 +1,11 @@
 package com.example.concertservice.domain.service;
 
-import com.example.concertservice.domain.model.ConcertDate;
-import com.example.concertservice.domain.model.ConcertDateDetails;
-import com.example.concertservice.domain.model.ConcertSeat;
-import com.example.concertservice.domain.model.ConcertSeatDetail;
+import com.example.concertservice.domain.model.*;
 import com.example.concertservice.domain.repository.ConcertRepository;
+import com.example.concertservice.domain.repository.SeatRepository;
+import com.example.concertservice.exception.CustomException;
+import com.example.concertservice.exception.ErrorEnum;
+import com.example.concertservice.interfaces.api.dto.SeatResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class ConcertServiceImpl implements ConcertService {
 
     private final ConcertRepository concertRepository;
+    private final SeatRepository seatRepository;
 
     @Override
     public ConcertDate selectAvailableDates(Long concertId) {
@@ -43,5 +45,12 @@ public class ConcertServiceImpl implements ConcertService {
                 .map(entity -> new ConcertSeatDetail(entity.getId(), entity.getSeatNo()))
                 .collect(Collectors.toList());
         return new ConcertSeat(concertDetailId, details);
+    }
+
+    @Override
+    public SeatResponse getSeatById(Long seatId) {
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(() -> new CustomException(ErrorEnum.NO_SEAT));
+        return SeatResponse.of(seat,seat.getConcert().getId());
     }
 }
