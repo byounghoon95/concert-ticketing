@@ -1,6 +1,5 @@
-package com.example.reservationservice.domain.message.model;
+package com.example.reservationservice.domain.model;
 
-import com.example.reservationservice.domain.model.ReservationOutbox;
 import lombok.Builder;
 
 import java.time.LocalDateTime;

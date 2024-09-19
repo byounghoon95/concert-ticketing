@@ -1,8 +1,7 @@
 package com.example.reservationservice.domain.repository;
 
-import com.example.reservationservice.domain.message.model.OutboxDto;
-import com.example.reservationservice.domain.message.model.OutboxStatus;
-import com.example.reservationservice.domain.message.repository.OutboxRepository;
+import com.example.reservationservice.domain.model.OutboxDto;
+import com.example.reservationservice.domain.model.OutboxStatus;
 import com.example.reservationservice.domain.model.ReservationOutbox;
 import com.example.reservationservice.infrastructure.ReservationOutboxJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("ReservationOutboxRepository")
+@Repository
 @RequiredArgsConstructor
-public class ReservationOutboxRepositoryImpl implements OutboxRepository {
+public class ReservationOutboxRepositoryImpl implements ReservationOutboxRepository {
 
     private final ReservationOutboxJpaRepository outboxJpaRepository;
 

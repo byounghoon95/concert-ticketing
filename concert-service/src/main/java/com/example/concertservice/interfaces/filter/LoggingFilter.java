@@ -1,4 +1,4 @@
-package com.example.concertservice.filter;
+package com.example.concertservice.interfaces.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;

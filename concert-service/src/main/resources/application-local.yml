@@ -1,5 +1,13 @@
+concert-service:
+  url: http://localhost:9101/api/concert
 member-service:
-  url: http://localhost:9092
+  url: http://localhost:9100/api/concert
+reservation-service:
+  url: http://localhost:9104/api/concert
+pay-service:
+  url: http://localhost:9103/api/concert
+queue-service:
+  url: http://localhost:9102/api/concert
 
 spring:
   datasource:
@@ -9,7 +17,7 @@ spring:
     password: myuser
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
@@ -34,5 +42,5 @@ slack:
   token: 토큰
   channel: '#spring'
 server:
-  port: 9091
+  port: 9101
 

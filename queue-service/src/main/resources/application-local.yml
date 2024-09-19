@@ -1,3 +1,14 @@
+concert-service:
+  url: http://localhost:9101/api/concert
+member-service:
+  url: http://localhost:9100/api/concert
+reservation-service:
+  url: http://localhost:9104/api/concert
+pay-service:
+  url: http://localhost:9103/api/concert
+queue-service:
+  url: http://localhost:9102/api/concert
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/queue?serverTimezone=Asia/Seoul
@@ -6,7 +17,7 @@ spring:
     password: myuser
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
@@ -31,5 +42,5 @@ slack:
   token: 토큰
   channel: '#spring'
 server:
-  port: 9090
+  port: 9102
 

@@ -1,6 +1,5 @@
 package com.example.reservationservice.domain.model;
 
-import com.example.reservationservice.domain.message.model.OutboxStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

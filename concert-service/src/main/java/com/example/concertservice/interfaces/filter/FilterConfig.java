@@ -1,4 +1,4 @@
-package com.example.concertservice.filter;
+package com.example.concertservice.interfaces.filter;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

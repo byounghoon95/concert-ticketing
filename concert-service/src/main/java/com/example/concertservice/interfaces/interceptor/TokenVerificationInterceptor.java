@@ -1,4 +1,4 @@
-package com.example.concertservice.interceptor;
+package com.example.concertservice.interfaces.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

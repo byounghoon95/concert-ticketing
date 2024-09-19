@@ -1,4 +1,4 @@
-package com.example.concertservice.interceptor;
+package com.example.concertservice.interfaces.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

@@ -1,22 +1,19 @@
 package com.example.reservationservice.domain.service;
 
-import com.example.reservationservice.domain.message.model.OutboxDto;
-import com.example.reservationservice.domain.message.repository.OutboxRepository;
-import com.example.reservationservice.domain.message.service.OutboxService;
+import com.example.reservationservice.domain.model.OutboxDto;
 import com.example.reservationservice.domain.model.ReservationOutbox;
+import com.example.reservationservice.domain.repository.ReservationOutboxRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service("ReservationOutboxService")
+@Service
 @RequiredArgsConstructor
-public class ReservationOutboxServiceImpl implements OutboxService {
+public class ReservationOutboxServiceImpl implements ReservationOutboxService {
 
-    @Qualifier("ReservationOutboxRepository")
-    private final OutboxRepository outboxRepository;
+    private final ReservationOutboxRepository outboxRepository;
 
     @Override
     @Transactional
