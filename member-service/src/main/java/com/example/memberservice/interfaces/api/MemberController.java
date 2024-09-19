@@ -1,6 +1,7 @@
 package com.example.memberservice.interfaces.api;
 
 import com.example.memberservice.domain.service.MemberService;
+import com.example.memberservice.interfaces.api.common.response.CommonResponse;
 import com.example.memberservice.interfaces.api.dto.MemberChargeRequest;
 import com.example.memberservice.interfaces.api.dto.MemberResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +16,12 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/balance/{memberId}")
-    public ResponseEntity<MemberResponse> getBalance(@PathVariable("memberId") Long memberId) {
-        return ResponseEntity.ok(MemberResponse.of(memberService.getBalance(memberId)));
+    public ResponseEntity<CommonResponse> getBalance(@PathVariable("memberId") Long memberId) {
+        return ResponseEntity.ok(CommonResponse.success(MemberResponse.of(memberService.getBalance(memberId))));
     }
 
     @PostMapping("/balance")
-    public ResponseEntity<MemberResponse> chargeBalance(@RequestBody MemberChargeRequest request) {
-        return ResponseEntity.ok(MemberResponse.of(memberService.chargeBalance(request)));
+    public ResponseEntity<CommonResponse> chargeBalance(@RequestBody MemberChargeRequest request) {
+        return ResponseEntity.ok(CommonResponse.success(MemberResponse.of(memberService.chargeBalance(request))));
     }
 }
