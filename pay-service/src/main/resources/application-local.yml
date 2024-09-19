@@ -1,13 +1,13 @@
 concert-service:
   url: http://localhost:9101/api/concert
 member-service:
-  url: http://localhost:9100/api/concert
+  url: http://localhost:9100/api/member
 reservation-service:
-  url: http://localhost:9104/api/concert
+  url: http://localhost:9104/api/reservation
 pay-service:
-  url: http://localhost:9103/api/concert
+  url: http://localhost:9103/api/pay
 queue-service:
-  url: http://localhost:9102/api/concert
+  url: http://localhost:9102/api/queue
 
 spring:
   datasource:
