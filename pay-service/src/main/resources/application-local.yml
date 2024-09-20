@@ -10,6 +10,8 @@ queue-service:
   url: http://localhost:9102/api/queue
 
 spring:
+  application:
+    name: pay-service
   datasource:
     url: jdbc:mysql://localhost:3306/pay?serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -46,6 +48,14 @@ logging:
         orm:
           jdbc:
             bind: info
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:9105/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+
 
 slack:
   token: 토큰

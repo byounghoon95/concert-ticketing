@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes: # yml ?? ?? ?? ? - ??
+        - id: concert-service
+          uri: lb://CONCERT-SERVICE # lb ?? ? ??? ???? ??
+          predicates:
+            - Path=/api/concert/**
+        - id: member_service
+          uri: lb://MEMBER-SERVICE
+          predicates:
+            - Path=/api/member/**
+        - id: reservation_service
+          uri: lb://RESERVATION-SERVICE
+          predicates:
+            - Path=/api/reserve/**
+        - id: pay_service
+          uri: lb://PAY-SERVICE
+          predicates:
+            - Path=/api/pay/**
+        - id: queue_service
+          uri: lb://QUEUE-SERVICE
+          predicates:
+            - Path=/api/queue/**
+        - id: eureka-server
+          uri: http://localhost:9105
+          predicates:
+            - Path=/eureka/main
+          filters:
+            - SetPath=/ # http://localhost:8761/eureka/main -> http://localhost:8761/
+        - id: eureka-server-static # eureka css ???? ?? ??
+          uri: http://localhost:9105
+          predicates:
+            - Path=/eureka/**
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:9105/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+
+server:
+  port: 9106
