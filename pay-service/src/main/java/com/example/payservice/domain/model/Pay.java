@@ -1,6 +1,7 @@
 package com.example.payservice.domain.model;
 
 import com.example.payservice.domain.common.entity.BaseEntity;
+import com.example.payservice.external.ReservePayResponse;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -20,9 +21,8 @@ public class Pay extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "RESERVATION_ID", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-//    private Reservation reservation;
+    @Column(name = "RESERVATION_ID")
+    private Long reservationId;
 
     @Column(name = "AMOUNT")
     private Long amount;
@@ -32,18 +32,16 @@ public class Pay extends BaseEntity {
     private PayStatus status;
 
     @Builder
-    public Pay(Long amount, PayStatus status) {
-//    public Pay(Reservation reservation, Long amount, PayStatus status) {
-//        this.reservation = reservation;
+    public Pay(Long reservationId, Long amount, PayStatus status) {
+        this.reservationId = reservationId;
         this.amount = amount;
         this.status = status;
     }
 
-    public static Pay createPay() {
-//    public static Pay createPay(Reservation reservation) {
+    public static Pay createPay(ReservePayResponse reservation) {
         return Pay.builder()
-//                .reservation(reservation)
-//                .amount(reservation.getPrice())
+                .reservationId(reservation.reservationId())
+                .amount(reservation.price())
                 .status(PayStatus.PAYED)
                 .build();
     }

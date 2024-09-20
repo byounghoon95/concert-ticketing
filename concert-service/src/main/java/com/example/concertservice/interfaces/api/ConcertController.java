@@ -6,10 +6,7 @@ import com.example.concertservice.domain.service.SeatService;
 import com.example.concertservice.interfaces.api.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -51,6 +48,11 @@ public class ConcertController {
             @PathVariable("memberId") Long memberId
     ) {
         seatService.reserveSeat(seatId, LocalDateTime.now(), memberId);
+    }
+
+    @PostMapping("/seat")
+    public void confirmSeat(@RequestBody Long seatId) {
+        seatService.confirmSeat(seatId);
     }
 }
 

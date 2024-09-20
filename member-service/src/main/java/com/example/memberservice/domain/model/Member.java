@@ -40,14 +40,10 @@ public class Member extends BaseEntity {
     }
 
     public void chargeBalance(Long amount) {
-        this.balance += amount;
-    }
-
-    public void minusBalance(Long amount) {
-        if (this.balance < amount) {
+        if (balance + amount < 0) {
             throw new CustomException(ErrorEnum.NOT_ENOUGH_BALANCE);
         }
-        this.balance -= amount;
-    }
 
+        this.balance += amount;
+    }
 }

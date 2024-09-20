@@ -3,7 +3,7 @@ concert-service:
 member-service:
   url: http://localhost:9100/api/member
 reservation-service:
-  url: http://localhost:9104/api/reservation
+  url: http://localhost:9104/api/reserve
 pay-service:
   url: http://localhost:9103/api/pay
 queue-service:

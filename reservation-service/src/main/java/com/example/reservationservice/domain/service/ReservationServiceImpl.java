@@ -2,11 +2,10 @@ package com.example.reservationservice.domain.service;
 
 import com.example.reservationservice.domain.clients.SeatClient;
 import com.example.reservationservice.domain.event.ReservationEvent;
-import com.example.reservationservice.domain.external.SeatResponse;
 import com.example.reservationservice.domain.external.SeatCompensation;
+import com.example.reservationservice.domain.external.SeatResponse;
 import com.example.reservationservice.domain.model.OutboxStatus;
 import com.example.reservationservice.domain.model.Reservation;
-import com.example.reservationservice.domain.model.ReservationOutbox;
 import com.example.reservationservice.domain.repository.ReservationOutboxRepository;
 import com.example.reservationservice.domain.repository.ReservationRepository;
 import com.example.reservationservice.util.JsonConverter;
@@ -47,12 +46,19 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     @Override
     public void republish() {
-        outboxRepository.findAllByStatus(OutboxStatus.INIT).forEach(value -> {
-            ReservationOutbox outbox = (ReservationOutbox) value;
+        outboxRepository.findAllByStatus(OutboxStatus.INIT).forEach(outbox -> {
             if (!outbox.isPublished()) {
                 outbox.published();
                 eventPublisher.publishEvent(jsonConverter.fromJson(outbox.getPayload(), ReservationEvent.class));
             }
         });
+    }
+
+    @Override
+    public Reservation verifyReservation(Long reservationId, Long memberId) {
+        Reservation reservation = reservationRepository.findById(reservationId);
+        reservation.matchMember(reservation.getMemberId(), memberId);
+        reservation.isAvailable();
+        return reservation;
     }
 }

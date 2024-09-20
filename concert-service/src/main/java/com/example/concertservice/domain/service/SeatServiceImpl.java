@@ -41,6 +41,13 @@ public class SeatServiceImpl implements SeatService {
 
     @Transactional
     @Override
+    public void confirmSeat(Long seatId) {
+        Seat seat = selectSeat(seatId);
+        seat.updateReservedAt(LocalDateTime.of(9998, 12, 31, 23, 59, 59));
+    }
+
+    @Transactional
+    @Override
     public void updateReservedAt(Long seatId, LocalDateTime now) {
         Seat seat = selectSeat(seatId);
         seat.updateReservedAt(now);

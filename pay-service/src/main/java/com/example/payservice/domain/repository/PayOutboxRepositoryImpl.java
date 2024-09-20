@@ -2,7 +2,6 @@ package com.example.payservice.domain.repository;
 
 import com.example.payservice.domain.message.model.OutboxDto;
 import com.example.payservice.domain.message.model.OutboxStatus;
-import com.example.payservice.domain.message.repository.OutboxRepository;
 import com.example.payservice.domain.model.PayOutbox;
 import com.example.payservice.infrastructure.PayOutboxJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("PayOutboxRepository")
+@Repository
 @RequiredArgsConstructor
-public class PayOutboxRepositoryImpl implements OutboxRepository {
+public class PayOutboxRepositoryImpl implements PayOutboxRepository {
 
     private final PayOutboxJpaRepository outboxJpaRepository;
 
