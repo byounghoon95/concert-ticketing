@@ -1,0 +1,29 @@
+spring:
+  config:
+    activate:
+      on-profile: container
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  cache:
+    type: redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+logging:
+  level:
+    org:
+      hibernate:
+        orm:
+          jdbc:
+            bind: info
+
+slack:
+  token: 토큰
+  channel: '#spring'
