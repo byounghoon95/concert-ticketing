@@ -30,4 +30,9 @@ public class QueueController {
     public ResponseEntity<CommonResponse> getInfo(@PathVariable Long memberId) {
         return ResponseEntity.ok(CommonResponse.success(QueueResponse.of(queueService.getInfo(memberId))));
     }
+
+    @PostMapping("/expire")
+    public void expireActiveToken(@RequestBody Long memberId) {
+        queueService.expireActiveToken(memberId);
+    }
 }

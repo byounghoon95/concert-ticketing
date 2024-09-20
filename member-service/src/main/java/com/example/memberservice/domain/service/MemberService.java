@@ -8,5 +8,4 @@ public interface MemberService {
     Member getBalance(Long memberId);
     Member chargeBalance(MemberChargeRequest request);
     Member findById(Long memberId);
-    void minusBalance(Long memberId, Long price);
 }

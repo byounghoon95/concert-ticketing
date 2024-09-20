@@ -16,4 +16,6 @@ public interface SeatService {
     Seat selectSeatWithLock(Long seatId);
 
     void rollbackSeat(SeatCompensation seat);
+
+    void confirmSeat(Long seatId);
 }

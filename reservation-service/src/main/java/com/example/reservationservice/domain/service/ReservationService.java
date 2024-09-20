@@ -10,4 +10,6 @@ public interface ReservationService {
     Reservation findById(Long reservationId);
 
     void republish();
+
+    Reservation verifyReservation(Long reservationId, Long memberId);
 }

@@ -9,8 +9,7 @@ public record PayMessageEvent(Long payId, Long reservationId, Long amount, PaySt
     }
 
     public static PayMessageEvent from(Pay pay) {
-        return new PayMessageEvent(pay.getId(), 1L, pay.getAmount(), pay.getStatus());
-//        return new PayMessageEvent(pay.getId(), pay.getReservation().getId(), pay.getAmount(), pay.getStatus());
+        return new PayMessageEvent(pay.getId(), pay.getReservationId(), pay.getAmount(), pay.getStatus());
     }
 }
 

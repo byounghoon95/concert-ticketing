@@ -1,22 +1,19 @@
 package com.example.payservice.domain.service;
 
 import com.example.payservice.domain.message.model.OutboxDto;
-import com.example.payservice.domain.message.repository.OutboxRepository;
-import com.example.payservice.domain.message.service.OutboxService;
 import com.example.payservice.domain.model.PayOutbox;
+import com.example.payservice.domain.repository.PayOutboxRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service("PayOutboxService")
+@Service
 @RequiredArgsConstructor
-public class PayOutboxServiceImpl implements OutboxService {
+public class PayOutboxServiceImpl implements PayOutboxService {
 
-    @Qualifier("PayOutboxRepository")
-    private final OutboxRepository outboxRepository;
+    private final PayOutboxRepository outboxRepository;
 
     @Override
     @Transactional
