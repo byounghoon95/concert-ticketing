@@ -14,8 +14,3 @@ CREATE TABLE `member` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `member` (member_login_id, balance, version) VALUES ('A1', 5000, 0);
-INSERT INTO `member` (member_login_id, balance, version) VALUES ('A2', 4000, 0);
-INSERT INTO `member` (member_login_id, balance, version) VALUES ('A3', 4000, 0);
-INSERT INTO `member` (member_login_id, balance, version) VALUES ('A4', 4000, 0);
-INSERT INTO `member` (member_login_id, balance, version) VALUES ('A5', 4000, 0);
-INSERT INTO `member` (member_login_id, balance, version) VALUES ('A6', 3000, 0);

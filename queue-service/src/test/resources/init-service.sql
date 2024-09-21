@@ -11,14 +11,14 @@ CREATE TABLE `member` (
                           PRIMARY KEY (`id`),
                           UNIQUE KEY `UK8eaedgr362q8tog924fo6u7nv` (`member_login_id`),
                           KEY `idx_memberLogin_id` (`member_login_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `member` (member_login_id, balance) VALUES ('A0', 0);
-INSERT INTO `member` (member_login_id, balance) VALUES ('A1', 1000);
-INSERT INTO `member` (member_login_id, balance) VALUES ('A2', 2000);
-INSERT INTO `member` (member_login_id, balance) VALUES ('A3', 3000);
-INSERT INTO `member` (member_login_id, balance) VALUES ('A4', 4000);
-INSERT INTO `member` (member_login_id, balance) VALUES ('A5', 5000);
-INSERT INTO `member` (member_login_id, balance) VALUES ('A6', 6000);
-INSERT INTO `member` (member_login_id, balance) VALUES ('A7', 7000);
-INSERT INTO `member` (member_login_id, balance) VALUES ('A8', 8000);
+INSERT INTO `member` (member_login_id, balance, version) VALUES ('A0', 0, 0);
+INSERT INTO `member` (member_login_id, balance, version) VALUES ('A1', 1000, 0);
+INSERT INTO `member` (member_login_id, balance, version) VALUES ('A2', 2000, 0);
+INSERT INTO `member` (member_login_id, balance, version) VALUES ('A3', 3000, 0);
+INSERT INTO `member` (member_login_id, balance, version) VALUES ('A4', 4000, 0);
+INSERT INTO `member` (member_login_id, balance, version) VALUES ('A5', 5000, 0);
+INSERT INTO `member` (member_login_id, balance, version) VALUES ('A6', 6000, 0);
+INSERT INTO `member` (member_login_id, balance, version) VALUES ('A7', 7000, 0);
+INSERT INTO `member` (member_login_id, balance, version) VALUES ('A8', 8000, 0);
