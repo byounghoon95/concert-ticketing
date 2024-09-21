@@ -85,8 +85,6 @@ public class QueueControllerIntegrateTest {
     }
 
     private void setUpQueue() {
-
-
         Long memberId = 1L;
         Set<String> activeSet = Set.of(
                 memberId + ":" + LocalDateTime.of(2024, 6, 12, 0, 0, 0).toEpochSecond(ZoneOffset.UTC),
