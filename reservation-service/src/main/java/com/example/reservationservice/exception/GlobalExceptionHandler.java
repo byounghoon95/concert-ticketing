@@ -1,6 +1,6 @@
 package com.example.reservationservice.exception;
 
-import com.example.reservationservice.interfaces.common.response.CommonResponse;
+import com.example.reservationservice.interfaces.api.common.response.CommonResponse;
 import com.example.reservationservice.util.SlackClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
