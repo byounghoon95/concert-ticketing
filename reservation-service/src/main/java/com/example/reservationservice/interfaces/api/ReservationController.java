@@ -5,7 +5,7 @@ import com.example.reservationservice.domain.service.ReservationService;
 import com.example.reservationservice.interfaces.api.dto.ReservePayResponse;
 import com.example.reservationservice.interfaces.api.dto.ReserveSeatRequest;
 import com.example.reservationservice.interfaces.api.dto.ReserveSeatResponse;
-import com.example.reservationservice.interfaces.common.response.CommonResponse;
+import com.example.reservationservice.interfaces.api.common.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

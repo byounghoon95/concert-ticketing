@@ -1,7 +1,7 @@
 package com.example.reservationservice.domain.clients;
 
 import com.example.reservationservice.domain.external.SeatResponse;
-import com.example.reservationservice.interfaces.common.response.CommonResponse;
+import com.example.reservationservice.interfaces.api.common.response.CommonResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

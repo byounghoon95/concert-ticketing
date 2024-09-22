@@ -35,4 +35,10 @@ public class QueueController {
     public void expireActiveToken(@RequestBody Long memberId) {
         queueService.expireActiveToken(memberId);
     }
+
+    @PostMapping("/verify")
+    public boolean verifyToken(@RequestBody Long memberId) {
+        return queueService.verify(memberId);
+    }
+
 }

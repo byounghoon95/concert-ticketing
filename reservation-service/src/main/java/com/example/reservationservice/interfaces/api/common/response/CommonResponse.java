@@ -1,4 +1,4 @@
-package com.example.reservationservice.interfaces.common.response;
+package com.example.reservationservice.interfaces.api.common.response;
 
 import com.example.reservationservice.exception.ErrorEnum;
 import lombok.Builder;
